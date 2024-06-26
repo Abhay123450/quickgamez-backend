@@ -1,0 +1,5 @@
+service: backend
+runtime: nodejs20
+handlers:
+    - url: /api/.*
+      script: auto

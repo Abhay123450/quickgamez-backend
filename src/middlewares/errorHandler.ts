@@ -1,7 +1,11 @@
 import { Request, Response, NextFunction } from "express";
-import { AppError } from "../utils/AppError";
+import { AppError } from "../utils/AppError.js";
+import {
+    sendResponseClientError,
+    sendResponseServerError
+} from "../utils/sendResponse.js";
 
-exports.errorHandler = (
+export const errorHandler = (
     err: Error | AppError,
     req: Request,
     res: Response,
@@ -9,21 +13,12 @@ exports.errorHandler = (
 ) => {
     try {
         if (err instanceof AppError) {
-            res.status(err.statusCode).json({
-                success: false,
-                message: err.message
-            });
-        } else {
-            res.status(500).json({
-                success: false,
-                message: err.message || "Internal Server Error"
-            });
+            sendResponseClientError(res, err.statusCode, err.message);
+        } else if (err instanceof Error) {
+            sendResponseClientError(res, err.message);
         }
     } catch (error) {
         console.log(error);
-        res.status(500).json({
-            success: false,
-            message: "An error has occurred."
-        });
+        sendResponseServerError(res);
     }
 };

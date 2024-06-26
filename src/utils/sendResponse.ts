@@ -1,5 +1,5 @@
 import { Response } from "express";
-import { HttpStatusCode } from "../constants/httpStatusCode.enum";
+import { HttpStatusCode } from "../constants/httpStatusCode.enum.js";
 
 type ResponseObject = { [key: string]: ResponseObject | any };
 type ResponseArray = Array<any>;
@@ -66,7 +66,7 @@ export function sendResponseSuccess(res: Response, ...rest: any[]) {
         }
     } else if (rest.length === 2) {
         if (typeof rest[0] === "number" && typeof rest[1] === "string") {
-            // status code, message
+            // statusCode, message
             return res
                 .status(rest[0])
                 .json({ success: true, message: rest[1], data: {} });
@@ -113,14 +113,15 @@ export function sendResponseClientError(res: Response, ...rest: any[]) {
             //statusCode
             return res
                 .status(rest[0])
-                .json({ success: true, message: defaultMessageClientError });
+                .json({ success: false, message: defaultMessageClientError });
         } else if (typeof rest[0] === "string") {
             // message
             return res
                 .status(HttpStatusCode.BAD_REQUEST)
-                .json({ success: true, message: rest[0] });
+                .json({ success: false, message: rest[0] });
         }
     } else if (rest.length === 2) {
+        // statusCode, message
         return res.status(rest[0]).json({ success: false, message: rest[1] });
     }
 }
@@ -147,14 +148,15 @@ export function sendResponseServerError(res: Response, ...rest: any[]) {
             //statusCode
             return res
                 .status(rest[0])
-                .json({ success: true, message: defaultMessageServerError });
+                .json({ success: false, message: defaultMessageServerError });
         } else if (typeof rest[0] === "string") {
             // message
             return res
                 .status(HttpStatusCode.INTERNAL_SERVER_ERROR)
-                .json({ success: true, message: rest[0] });
+                .json({ success: false, message: rest[0] });
         }
     } else if (rest.length === 2) {
+        // statusCode, message
         return res.status(rest[0]).json({ success: false, message: rest[1] });
     }
 }
