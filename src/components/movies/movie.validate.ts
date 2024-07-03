@@ -184,8 +184,8 @@ export const validateAddMoviesReq = () => [
         .escape()
         .isLength({ min: 1 })
         .withMessage("Director name is required.")
-        .matches(/^[a-zA-Z ]+$/)
-        .withMessage("Director name can only contain letters."),
+        .matches(/^[a-zA-Z\s.]*$/)
+        .withMessage("Director name can only contain letters and period(.)."),
 
     body("movies.*.genre")
         .isArray()
@@ -204,8 +204,10 @@ export const validateAddMoviesReq = () => [
         .escape()
         .isLength({ min: 1 })
         .withMessage("Production house cannot be empty.")
-        .matches(/^[a-zA-Z0-9_ ]+$/)
-        .withMessage("Production house name can be alphanumeric only."),
+        .matches(/^[a-zA-Z0-9\s.]*$/)
+        .withMessage(
+            "Production house name can contain letters, spaces and period(.) only."
+        ),
 
     body("movies.*.boxOfficeStatus")
         .trim()
