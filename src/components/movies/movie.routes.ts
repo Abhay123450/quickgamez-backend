@@ -1,6 +1,6 @@
 import express from "express";
 const router = express.Router();
-import { MovieController } from "./movie.controller.js";
+import { MovieController } from "./MovieController.js";
 import { MovieRepositoryImpl } from "./MovieRepositoryImpl.js";
 import { catchAsycError } from "../../middlewares/catchAsyncError.js";
 import {
