@@ -1,7 +1,6 @@
 import { HttpStatusCode } from "../../constants/httpStatusCode.enum.js";
 import { UserAccountStatus } from "../../constants/userAccountStatus.enum.js";
 import { UserRole } from "../../constants/userRole.enum.js";
-import { AppError } from "../../utils/AppError.js";
 import { ClientError } from "../../utils/AppErrors.js";
 import { ConsoleLog } from "../../utils/ConsoleLog.js";
 import { generateOtp } from "../../utils/otpUtil.js";
