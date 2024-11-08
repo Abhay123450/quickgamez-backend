@@ -7,15 +7,17 @@ import {
     AuthenticationError,
     AuthorizationError,
     ClientError,
+    ServerError,
     ValidationError
 } from "../utils/AppErrors.js";
+import { ErrorCode } from "../constants/ErrorCode.enum.js";
 const { TokenExpiredError } = jwt;
 
 export const errorHandler = (
     err: Error | AppError,
-    req: Request,
+    _req: Request,
     res: Response,
-    next: NextFunction
+    _next: NextFunction
 ) => {
     try {
         ConsoleLog.error(err);
@@ -36,7 +38,7 @@ export const errorHandler = (
             res.status(HttpStatusCode.UNAUTHORIZED).json({
                 success: false,
                 message: "Session expired. Please login again.",
-                errorCode: "TOKEN_EXPIRED"
+                errorCode: ErrorCode.TOKEN_EXPIRED
             });
         } else if (err instanceof AuthenticationError) {
             res.status(err.statusCode).json({
@@ -54,13 +56,20 @@ export const errorHandler = (
             res.status(err.statusCode).json({
                 success: false,
                 message: err.message,
-                errorCode: "CLIENT_ERROR"
+                errorCode: ErrorCode.BAD_REQUEST
+            });
+        } else if (err instanceof ServerError) {
+            ConsoleLog.error(err.message);
+            res.status(err.statusCode).json({
+                success: false,
+                message: "Internal server error",
+                errorCode: ErrorCode.INTERNAL_SERVER_ERROR
             });
         } else {
             res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).json({
                 success: false,
                 message: "Internal server error",
-                errorCode: "INTERNAL_SERVER_ERROR"
+                errorCode: ErrorCode.INTERNAL_SERVER_ERROR
             });
         }
     } catch (error) {
@@ -68,7 +77,7 @@ export const errorHandler = (
         res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).json({
             success: false,
             message: "Internal server error",
-            errorCode: "INTERNAL_SERVER_ERROR"
+            errorCode: ErrorCode.INTERNAL_SERVER_ERROR
         });
     }
 };
