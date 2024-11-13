@@ -28,7 +28,9 @@ export class UserRepositoryImpl implements UserRepository {
         sort: number = 1,
         filter?: Partial<User>
     ): Promise<Partial<User>[]> {
-        let sortObject: { [key: string]: SortOrder } = {
+        let sortObject: {
+            [K in keyof User]?: { [key in K]: SortOrder };
+        }[keyof User] = {
             createdAt: "desc"
         };
         switch (sort) {
