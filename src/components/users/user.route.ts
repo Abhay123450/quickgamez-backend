@@ -7,6 +7,8 @@ import {
     validateGetUsersReq,
     validateUsername
 } from "./user.validate.js";
+import { userAuthRouter } from "./auth/userAuth.route.js";
+import { authenticateUser } from "../../middlewares/userAuth.middleware.js";
 import { UserServiceImpl } from "./UserServiceImpl.js";
 const router = express.Router();
 
@@ -14,9 +16,14 @@ const userRepository = new UserRepositoryImpl();
 const userService = new UserServiceImpl(userRepository);
 const userController = new UserControllerImpl(userService);
 
+router.use("/users", userAuthRouter);
+
 router
     .route("/users/my-profile")
-    .get(catchAsycError(userController.getMyDetails.bind(userController)));
+    .get(
+        authenticateUser,
+        catchAsycError(userController.getMyDetails.bind(userController))
+    );
 
 router
     .route("/users/check-username")
@@ -38,6 +45,9 @@ router
 
 router
     .route("/users/:userId")
-    .get(catchAsycError(userController.getUserById.bind(userController)));
+    .get(
+        authenticateUser,
+        catchAsycError(userController.getUserById.bind(userController))
+    );
 
 export const userRouter = router;
