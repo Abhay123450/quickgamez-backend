@@ -14,6 +14,7 @@ import { movieRouter } from "./components/movies/movie.routes.js";
 
 import { errorHandler } from "./middlewares/errorHandler.js";
 import { userRouter } from "./components/users/user.route.js";
+import { commentRouter } from "./components/comments/comment.route.js";
 
 const port: number = Number(process.env.PORT) || 4000;
 
@@ -27,7 +28,8 @@ app.use(
             "http://localhost:5173",
             "http://192.168.1.7:5173",
             "http://192.168.1.4:5173",
-            "http://192.168.1.5:5173"
+            "http://192.168.1.5:5173",
+            "http://192.168.56.1:5173"
         ]
     })
 );
@@ -53,6 +55,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 // Routes
 app.use("/api/v1", movieRouter);
 app.use("/api/v1", userRouter);
+app.use("/api/v1", commentRouter);
 
 app.get("/api/v1/health-check", (req: Request, res: Response) => {
     sendResponseSuccess(res, "Server is up and running");
