@@ -13,6 +13,17 @@ import { ErrorCode } from "../constants/ErrorCode.enum.js";
 
 const userRepository = new UserRepositoryImpl();
 
+/**
+ * Authenticate the user using the access token provided in the request headers or cookies.
+ * Verifies the access token and if valid, retrieves the user from the database.
+ * Checks if the user is verified and not blocked.
+ * If the user is valid, sets the user in the request object and calls the next middleware.
+ * If the user is invalid, throws an AuthenticationError or AuthorizationError.
+ *
+ * @param {Request} req - The express request object.
+ * @param {Response} res - The express response object.
+ * @param {NextFunction} next - The express next middleware function.
+ */
 export async function authenticateUser(
     req: Request,
     res: Response,
@@ -82,6 +93,114 @@ export async function authenticateUser(
     }
 }
 
+/**
+ * Use this if user authentication is optional. This middleware checks if the user is authenticated or not. If the user is authenticated, it adds the user object to the request object.
+ *
+ * It checks if the `accessToken` is present in the request cookies or authorization header.
+ * If the token is valid, it fetches the user from the database and checks if the account is verified and not blocked.
+ * If the account is verified and not blocked, it adds the user to the request object and calls the next middleware.
+ * If the account is not verified or blocked, token is invalid or blacklisted, it calls the next middleware without adding the user to the request object.
+ *
+ * @param req - The request object
+ * @param res - The response object
+ * @param next - The next middleware or route handler
+ */
+export async function isUserAuthenticated(
+    req: Request,
+    res: Response,
+    next: NextFunction
+) {
+    try {
+        let accessToken: string | undefined;
+
+        ConsoleLog.info(`req.cookies ${JSON.stringify(req.cookies)}`);
+
+        if (req.cookies?.accessToken) {
+            accessToken = req.cookies.accessToken;
+            ConsoleLog.info(`accessToken ${accessToken}`);
+        } else {
+            accessToken = req.headers["authorization"]?.replace("Bearer ", "");
+            console.log(`authorizationHeader ${JSON.stringify(accessToken)}`);
+        }
+
+        if (!accessToken) {
+            return next();
+        }
+
+        const { userId } = jwt.verify(
+            accessToken,
+            process.env.ACCESS_TOKEN_SECRET as string
+        ) as { userId: string };
+
+        console.log(`payload ${JSON.stringify(userId)}`);
+
+        const fieldsToSelect: (keyof User)[] = ["accountStatus", "role"];
+        const user = await userRepository.getUserById(userId, fieldsToSelect);
+        console.log(`user ${JSON.stringify(user)}`);
+
+        if (!user || !user.userId || !user.accountStatus || !user.role) {
+            return next();
+        }
+
+        if (user.accountStatus === UserAccountStatus.UNVERIFIED) {
+            return next();
+        } else if (user.accountStatus === UserAccountStatus.BLOCKED) {
+            return next();
+        }
+
+        const isTokenBlacklisted: boolean | null =
+            await TokenBlacklistModel.findOne({
+                token: accessToken
+            });
+
+        if (isTokenBlacklisted) {
+            return next();
+        }
+
+        ConsoleLog.success(`user authenticated`);
+        req.user = user as User;
+        next();
+    } catch (error) {
+        ConsoleLog.error(`Error ${JSON.stringify(error)}`);
+        next();
+    }
+}
+
+export function decodeAccessToken(
+    req: Request,
+    res: Response,
+    next: NextFunction
+) {
+    try {
+        let accessToken: string | undefined;
+
+        if (req.cookies?.accessToken) {
+            accessToken = req.cookies.accessToken;
+        } else {
+            accessToken = req.headers["authorization"]?.replace("Bearer ", "");
+            console.log(`authorizationHeader ${JSON.stringify(accessToken)}`);
+        }
+        ConsoleLog.info(`accessToken ${accessToken}`);
+
+        if (!accessToken) {
+            throw new AuthenticationError(
+                "Login required.",
+                ErrorCode.LOGIN_REQUIRED
+            );
+        }
+
+        const { userId } = jwt.verify(
+            accessToken,
+            process.env.REFRESH_TOKEN_SECRET as string
+        ) as { userId: string };
+
+        req.userId = userId;
+        next();
+    } catch (error) {
+        next(error);
+    }
+}
+
 export function decodeRefreshToken(
     req: Request,
     res: Response,
@@ -93,8 +212,10 @@ export function decodeRefreshToken(
         if (req.cookies?.refreshToken) {
             refreshToken = req.cookies.refreshToken;
         } else {
-            refreshToken = req.headers["authorization"]?.replace("Bearer ", "");
-            console.log(`authorizationHeader ${JSON.stringify(refreshToken)}`);
+            refreshToken = Array.isArray(req.headers["refreshtoken"])
+                ? req.headers["refreshtoken"][0]
+                : req.headers["refreshtoken"];
+            console.log(`refreshtoken header ${JSON.stringify(refreshToken)}`);
         }
         ConsoleLog.info(`refreshToken ${refreshToken}`);
 
