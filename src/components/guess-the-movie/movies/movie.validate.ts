@@ -1,26 +1,56 @@
 import { body, CustomValidator, query } from "express-validator";
-import { isValidDate } from "../../utils/dateUtil.js";
+import { isValidDate } from "../../../utils/dateUtil.js";
+import { Difficulty } from "../../../constants/Difficulty.js";
 
 export const validateGetRandomMovieReq = () => [
     query("industry")
-        .optional()
         .trim()
         .escape()
         .isLength({ min: 1 })
         .withMessage("industry name cannot be empty.")
-        .matches(/^[a-zA-Z ]+$/)
-        .withMessage("industry name must be a string.")
+        .custom(
+            (industry) =>
+                typeof industry === "string" &&
+                ["hollywood", "bollywood"].includes(industry.toLowerCase())
+        )
+        .withMessage("industry name must be 'hollywood' or 'bollywood'."),
+    query("difficulty")
+        .isString()
+        .trim()
+        .escape()
+        .isLength({ min: 1 })
+        .withMessage("difficulty is required.")
+        .custom((difficulty: string) => difficulty in Difficulty)
+        .withMessage("difficulty must be 'easy', 'medium' or 'hard'."),
+    query("count")
+        .isNumeric()
+        .withMessage("count is required.")
+        .custom((count) => count > 0)
+        .withMessage("count must be a number greater than 0.")
+        .customSanitizer((value) => parseInt(value, 10))
 ];
 
 export const validateGetMoviesReq = () => [
     query("industry")
         .optional()
+        .isString()
         .trim()
         .escape()
-        .isLength({ min: 1 })
-        .withMessage("industry name cannot be empty.")
-        .matches(/^[a-zA-Z ]+$/)
-        .withMessage("industry name must be a string."),
+        .custom((industry) => {
+            const industries = ["HOLLYWOOD", "BOLLYWOOD"];
+            return (
+                typeof industry === "string" &&
+                industries.includes(industry.toUpperCase())
+            );
+        })
+        .withMessage("Industry must be HOLLYWOOD or BOLLYWOOD."),
+    query("difficulty")
+        .optional()
+        .isString()
+        .trim()
+        .escape()
+        .custom((difficulty: string) => difficulty in Difficulty)
+        .withMessage("difficulty must be 'easy', 'medium' or 'hard'."),
     query("page")
         .isNumeric()
         .withMessage("page is required.")
@@ -49,15 +79,27 @@ export const validateAddMovieReq = () => [
         .withMessage("Movie name cannot be empty.")
         .matches(/^[a-zA-Z0-9\-_/: ]+$/)
         .withMessage("Movie name must be alphanumeric."),
-
     body("industry")
+        .isString()
         .trim()
         .escape()
         .isLength({ min: 1 })
-        .withMessage("Industry cannot be empty.")
-        .matches(/^[a-zA-Z]+$/)
-        .withMessage("Industry name can only contain letters."),
-
+        .withMessage("'industry' is required.")
+        .custom((industry) => {
+            const industries = ["HOLLYWOOD", "BOLLYWOOD"];
+            return (
+                typeof industry === "string" &&
+                industries.includes(industry.toUpperCase())
+            );
+        })
+        .withMessage("Industry must be HOLLYWOOD or BOLLYWOOD."),
+    body("difficulty")
+        .isString()
+        .trim()
+        .escape()
+        .withMessage("'difficulty' is required.")
+        .custom((difficulty: string) => difficulty in Difficulty)
+        .withMessage("difficulty must be 'easy', 'medium' or 'hard'."),
     body("releaseDate")
         .trim()
         .escape()
@@ -74,7 +116,6 @@ export const validateAddMovieReq = () => [
             // Create and return the date object
             return new Date(Date.UTC(year, month, day));
         }),
-
     body("actors")
         .isArray()
         .withMessage("Actors must be an array")
@@ -86,7 +127,6 @@ export const validateAddMovieReq = () => [
         .withMessage(
             "Each actor's name must be a string and longer than 2 characters."
         ),
-
     body("director")
         .trim()
         .escape()
@@ -94,7 +134,6 @@ export const validateAddMovieReq = () => [
         .withMessage("Director name is required.")
         .matches(/^[a-zA-Z ]+$/)
         .withMessage("Director name can only contain letters."),
-
     body("genre")
         .isArray()
         .withMessage("Genre must be an array")
@@ -106,7 +145,6 @@ export const validateAddMovieReq = () => [
         .withMessage(
             "Each genre must be a string and longer than 2 characters."
         ),
-
     body("productionHouse")
         .trim()
         .escape()
@@ -114,7 +152,6 @@ export const validateAddMovieReq = () => [
         .withMessage("Production house cannot be empty.")
         .matches(/^[a-zA-Z0-9_ ]+$/)
         .withMessage("Production house name can be alphanumeric only."),
-
     body("boxOfficeStatus")
         .trim()
         .escape()
@@ -122,9 +159,7 @@ export const validateAddMovieReq = () => [
         .withMessage("Box office status cannot be empty.")
         .matches(/^[a-zA-Z ]+$/)
         .withMessage("Box office status can only contain letters."),
-
     body("hints")
-        .optional()
         .isArray()
         .withMessage("Hints must be an array")
         .custom((hints: string[]) =>
@@ -137,19 +172,33 @@ export const validateAddMovieReq = () => [
 
 export const validateAddMoviesReq = () => [
     body("movies.*.name")
+        .isString()
         .trim()
         .escape()
         .isLength({ min: 1 })
         .withMessage("Movie name cannot be empty."),
-
     body("movies.*.industry")
+        .isString()
         .trim()
         .escape()
         .isLength({ min: 1 })
-        .withMessage("Industry cannot be empty.")
-        .matches(/^[a-zA-Z]+$/)
-        .withMessage("Industry name can only contain letters."),
-
+        .withMessage("'industry' is required.")
+        .custom((industry) => {
+            const industries = ["HOLLYWOOD", "BOLLYWOOD"];
+            return (
+                typeof industry === "string" &&
+                industries.includes(industry.toUpperCase())
+            );
+        })
+        .withMessage("Industry must be HOLLYWOOD or BOLLYWOOD."),
+    body("movies.*.difficulty")
+        .isString()
+        .trim()
+        .escape()
+        .isLength({ min: 1 })
+        .withMessage("'difficulty' is required.")
+        .custom((difficulty: string) => difficulty in Difficulty)
+        .withMessage("difficulty must be 'easy', 'medium' or 'hard'."),
     body("movies.*.releaseDate")
         .trim()
         .escape()
@@ -166,7 +215,6 @@ export const validateAddMoviesReq = () => [
             // Create and return the date object
             return new Date(Date.UTC(year, month, day));
         }),
-
     body("movies.*.actors")
         .isArray()
         .withMessage("Actors must be an array")
@@ -178,15 +226,12 @@ export const validateAddMoviesReq = () => [
         .withMessage(
             "Each actor's name must be a string and longer than 2 characters."
         ),
-
     body("movies.*.director")
+        .isString()
         .trim()
         .escape()
         .isLength({ min: 1 })
-        .withMessage("Director name is required.")
-        .matches(/^[a-zA-Z\s.]*$/)
-        .withMessage("Director name can only contain letters and period(.)."),
-
+        .withMessage("Director name is required."),
     body("movies.*.genre")
         .isArray()
         .withMessage("Genre must be an array")
@@ -198,17 +243,12 @@ export const validateAddMoviesReq = () => [
         .withMessage(
             "Each genre must be a string and longer than 2 characters."
         ),
-
     body("movies.*.productionHouse")
+        .isString()
         .trim()
         .escape()
         .isLength({ min: 1 })
-        .withMessage("Production house cannot be empty.")
-        .matches(/^[a-zA-Z0-9\s.]*$/)
-        .withMessage(
-            "Production house name can contain letters, spaces and period(.) only."
-        ),
-
+        .withMessage("Production house cannot be empty."),
     body("movies.*.boxOfficeStatus")
         .trim()
         .escape()
@@ -216,7 +256,9 @@ export const validateAddMoviesReq = () => [
         .withMessage("Box office status cannot be empty.")
         .matches(/^[a-zA-Z ]+$/)
         .withMessage("Box office status can only contain letters."),
-
+    body("movies.*.boxOfficeCollection")
+        .isString()
+        .withMessage("Box office collection must be a string"),
     body("movies.*.hints")
         .optional()
         .isArray()
@@ -227,4 +269,33 @@ export const validateAddMoviesReq = () => [
             )
         )
         .withMessage("Each hint must be a string and longer than 2 characters.")
+];
+
+export const validateGetUnplayedMoviesReq = () => [
+    query("industry")
+        .isString()
+        .withMessage("Industry is required.")
+        .trim()
+        .escape()
+        .custom((industry) => {
+            const industries = ["HOLLYWOOD", "BOLLYWOOD"];
+            return (
+                typeof industry === "string" &&
+                industries.includes(industry.toUpperCase())
+            );
+        })
+        .withMessage("Industry must be HOLLYWOOD or BOLLYWOOD."),
+    query("difficulty")
+        .isString()
+        .withMessage("Difficulty is required.")
+        .trim()
+        .escape()
+        .custom((difficulty: string) => difficulty in Difficulty)
+        .withMessage("difficulty must be 'easy', 'medium' or 'hard'."),
+    query("count")
+        .isNumeric()
+        .withMessage("count is required.")
+        .custom((count) => count > 0)
+        .withMessage("count must be a number greater than 0.")
+        .customSanitizer((value) => parseInt(value, 10))
 ];
