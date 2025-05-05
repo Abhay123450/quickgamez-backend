@@ -8,4 +8,5 @@ export interface UserController {
     updateUser(req: Request, res: Response, next: NextFunction): void;
     deleteUser(req: Request, res: Response, next: NextFunction): void;
     isUserNameAvailable(req: Request, res: Response, next: NextFunction): void;
+    saveAvatar(req: Request, res: Response, next: NextFunction): void;
 }

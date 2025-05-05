@@ -255,6 +255,7 @@ export class UserRepositoryImpl implements UserRepository {
         if (userDocument.deviceTokens)
             user.deviceTokens = userDocument.deviceTokens;
         if (userDocument.emailOtp) user.emailOtp = userDocument.emailOtp;
+        if (userDocument.avatar) user.avatar = userDocument.avatar;
 
         return user;
     }

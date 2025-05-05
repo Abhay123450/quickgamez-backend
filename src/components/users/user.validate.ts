@@ -1,4 +1,4 @@
-import { body, query } from "express-validator";
+import { body, oneOf, param, query } from "express-validator";
 
 export const validateAddUserReq = () => [
     body("username")
@@ -8,9 +8,9 @@ export const validateAddUserReq = () => [
         .withMessage("User name must be a string.")
         .isLength({ min: 1 })
         .withMessage("User name cannot be empty.")
-        .matches(/^[a-zA-Z0-9_.]+$/)
+        .matches(/^[a-zA-Z0-9_]+$/)
         .withMessage(
-            "User name can contain only letters, numbers, underscores(_) and period(.)"
+            "User name can contain only letters, numbers and underscores(_)"
         ),
     body("email")
         .trim()
@@ -63,6 +63,41 @@ export const validateGetUsersReq = () => [
         .escape()
         .isString()
         .withMessage("Filter must be a string.")
+];
+
+export const validateUpdateUserReq = () => [
+    param("userId")
+        .exists()
+        .withMessage("User ID is required.")
+        .isLength({ min: 24, max: 24 })
+        .withMessage("Invalid User ID."),
+    oneOf(
+        [
+            body("username")
+                .trim()
+                .isString()
+                .withMessage("User name must be a string.")
+                .isLength({ min: 1 })
+                .withMessage("User name cannot be empty.")
+                .matches(/^[a-zA-Z0-9_]+$/)
+                .withMessage(
+                    "User name can contain only letters, numbers and underscores(_)"
+                ),
+            body("name")
+                .trim()
+                .escape()
+                .isLength({ min: 1 })
+                .withMessage("Name cannot be empty."),
+            body("avatar")
+                .trim()
+                .escape()
+                .isLength({ min: 1 })
+                .withMessage("Avatar cannot be empty.")
+        ],
+        {
+            message: "username or name is required."
+        }
+    )
 ];
 
 export const validateUsername = () => [

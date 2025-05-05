@@ -58,6 +58,9 @@ export const userSchema = new Schema<UserDocument>(
         emailOtp: {
             otp: Number,
             expiresAt: Date
+        },
+        avatar: {
+            type: String
         }
     },
     {

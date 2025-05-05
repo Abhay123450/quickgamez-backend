@@ -64,7 +64,8 @@ export class UserServiceImpl implements UserService {
             "name",
             "phone",
             "createdAt",
-            "accountStatus"
+            "accountStatus",
+            "avatar"
         ];
 
         console.log(`selectFields is ${JSON.stringify(selectFields)}`);
@@ -110,5 +111,9 @@ export class UserServiceImpl implements UserService {
 
     async deleteUser(userId: string): Promise<boolean> {
         return await this._userRepository.deleteUser(userId);
+    }
+
+    async saveAvatar(userId: string, avatar: string): Promise<boolean> {
+        return await this._userRepository.updateUser(userId, { avatar });
     }
 }

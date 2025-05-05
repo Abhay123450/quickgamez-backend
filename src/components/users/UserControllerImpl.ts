@@ -6,7 +6,12 @@ import { User } from "./User.js";
 import { UserService } from "./UserService.js";
 import { HttpStatusCode } from "../../constants/httpStatusCode.enum.js";
 import { ConsoleLog } from "../../utils/ConsoleLog.js";
-import { ClientError, ValidationError } from "../../utils/AppErrors.js";
+import {
+    AuthorizationError,
+    ClientError,
+    ServerError,
+    ValidationError
+} from "../../utils/AppErrors.js";
 
 export class UserControllerImpl implements UserController {
     private userService: UserService;
@@ -92,6 +97,8 @@ export class UserControllerImpl implements UserController {
             userId
         );
 
+        ConsoleLog.info(`user is ${JSON.stringify(user)}`);
+
         if (!user) {
             throw new ClientError("User not found");
         }
@@ -99,7 +106,46 @@ export class UserControllerImpl implements UserController {
         return sendResponseSuccess(res, this._removeSensitiveData(user));
     }
 
-    async updateUser(req: Request, res: Response, next: NextFunction) {}
+    async updateUser(req: Request, res: Response, next: NextFunction) {
+        const errors = validationResult(req);
+        const errorMessages = errors.array().map((error) => error.msg);
+        if (!errors.isEmpty()) {
+            throw new ValidationError(errorMessages);
+        }
+        const { userId, name, username, avatar } = matchedData(req);
+
+        ConsoleLog.info(`userId is ${userId}`);
+        ConsoleLog.info(`user is ${req.user.userId}`);
+
+        if (req.user.userId.toString() !== userId) {
+            throw new AuthorizationError(
+                "You are not authorized to update this user"
+            );
+        }
+
+        if (!name && !username && !avatar) {
+            throw new ValidationError(["Atleast one field is required"]);
+        }
+        const updateBody: Partial<User> = {};
+        if (name && name !== "") {
+            updateBody.name = name;
+        }
+        if (username && username !== "") {
+            updateBody.username = username;
+        }
+        if (avatar && avatar !== "") {
+            updateBody.avatar = avatar;
+        }
+        ConsoleLog.info(`updateBody is ${JSON.stringify(updateBody)}`);
+        const userUpdated = await this.userService.updateUser(
+            userId,
+            updateBody
+        );
+        if (!userUpdated) {
+            throw new ServerError("Failed to update user");
+        }
+        return sendResponseSuccess(res, "User updated successfully", {});
+    }
 
     async deleteUser(req: Request, res: Response, next: NextFunction) {}
 
@@ -117,6 +163,20 @@ export class UserControllerImpl implements UserController {
         const user = await this.userService.getUserByEmailOrUsername(username);
         const isAvailable: boolean = user ? false : true;
         return sendResponseSuccess(res, { isAvailable, username });
+    }
+
+    async saveAvatar(req: Request, res: Response, next: NextFunction) {
+        const errors = validationResult(req);
+        const errorMessages = errors.array().map((error) => error.msg);
+        if (!errors.isEmpty()) {
+            throw new ValidationError(errorMessages);
+        }
+        const { userId } = req.user;
+        const user = await this.userService.getUserById(userId);
+        if (!user) {
+            throw new ClientError("User not found");
+        }
+        return sendResponseSuccess(res, "Avatar saved successfully", {});
     }
 
     private _removeSensitiveData(user: Partial<User>): Partial<User> {

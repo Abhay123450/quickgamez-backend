@@ -18,4 +18,5 @@ export interface UserService {
     getUserByEmailOrUsername(userId: string): Promise<Partial<User> | null>;
     updateUser(userId: string, fieldsToUpdate: Partial<User>): Promise<boolean>;
     deleteUser(userId: string): Promise<boolean>;
+    saveAvatar(userId: string, avatar: string): Promise<boolean>;
 }
