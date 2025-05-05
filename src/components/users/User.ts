@@ -24,6 +24,7 @@ export interface UserDetails {
     role: UserRole;
     accountStatus: UserAccountStatus;
     createdAt: Date;
+    avatar?: string;
 }
 export interface User extends UserDetails, UserAuth {
     userId: string;

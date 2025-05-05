@@ -5,6 +5,7 @@ import { catchAsycError } from "../../middlewares/catchAsyncError.js";
 import {
     validateAddUserReq,
     validateGetUsersReq,
+    validateUpdateUserReq,
     validateUsername
 } from "./user.validate.js";
 import { userAuthRouter } from "./auth/userAuth.route.js";
@@ -48,6 +49,11 @@ router
     .get(
         authenticateUser,
         catchAsycError(userController.getUserById.bind(userController))
+    )
+    .put(
+        validateUpdateUserReq(),
+        authenticateUser,
+        catchAsycError(userController.updateUser.bind(userController))
     );
 
 export const userRouter = router;
