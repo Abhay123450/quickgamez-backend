@@ -46,10 +46,33 @@ router
     );
 
 router
+    .route("/comments/:commentId/report")
+    .post(
+        authenticateUser,
+        catchAsycError(commentCotroller.reportComment.bind(commentCotroller))
+    );
+
+router
+    .route("/comments/report")
+    .get(
+        authenticateUser,
+        catchAsycError(
+            commentCotroller.getReportedComments.bind(commentCotroller)
+        )
+    );
+
+router
     .route("/comments/reply")
     .post(
         authenticateUser,
         catchAsycError(commentCotroller.addReply.bind(commentCotroller))
+    );
+
+router
+    .route("/comments/:commentId")
+    .delete(
+        authenticateUser,
+        catchAsycError(commentCotroller.deleteComment.bind(commentCotroller))
     );
 
 router

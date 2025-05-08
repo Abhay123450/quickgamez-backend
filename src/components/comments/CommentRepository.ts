@@ -23,7 +23,7 @@ export interface CommentRepository {
         replyCount: number,
         activityCount: number
     ): Promise<boolean>;
-    deleteComment(commentId: string): Promise<boolean>;
+    deleteComment(commentId: string, userId: string): Promise<boolean>;
     addReaction(
         commentId: string,
         userId: string,
@@ -53,4 +53,10 @@ export interface CommentRepository {
         page: number,
         limit: number
     ): Promise<Partial<Comment>[]>;
+    reportComment(
+        commentId: string,
+        userId: string,
+        reason: string
+    ): Promise<boolean>;
+    getReportedComments(): Promise<Partial<Comment>[]>;
 }

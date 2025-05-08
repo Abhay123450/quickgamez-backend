@@ -30,4 +30,14 @@ export interface CommentController {
         res: Response,
         next: NextFunction
     ): Promise<void>;
+    reportComment(
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ): Promise<void>;
+    getReportedComments(
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ): Promise<void>;
 }

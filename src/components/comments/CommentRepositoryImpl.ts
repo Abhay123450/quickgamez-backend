@@ -19,9 +19,12 @@ import { ReactionDocument, ReactionModel } from "./reaction.model.js";
 import { Reaction } from "../../constants/CommentReaction.js";
 import { CommentReaction } from "./CommentReaction.js";
 import { Sort } from "./CommentService.js";
+import { CommentReportModel } from "./report/comment.model.js";
 
 type PopulatedComment = Omit<CommentDocument, "userId"> & {
-    userId: Pick<User, "username" | "name"> & { _id: Types.ObjectId };
+    userId: Pick<User, "username" | "name" | "avatar"> & {
+        _id: Types.ObjectId;
+    };
     replyToCommentId: {
         _id: Types.ObjectId;
         userId: Pick<User, "username" | "name"> & { _id: Types.ObjectId };
@@ -68,9 +71,9 @@ export class CommentRepositoryImpl implements CommentRepository {
             .skip((page - 1) * limit)
             .limit(limit)
             .sort(sortObj)
-            .populate<Pick<User, "username" | "name">>(
+            .populate<Pick<User, "username" | "name" | "avatar">>(
                 "userId",
-                "username name"
+                "username name avatar"
             );
         if (!comments) return [];
         // return comments as Partial<Comment>[];
@@ -112,8 +115,15 @@ export class CommentRepositoryImpl implements CommentRepository {
         }
         return true;
     }
-    async deleteComment(commentId: string): Promise<boolean> {
-        throw new Error("Method not implemented.");
+    async deleteComment(commentId: string, userId: string): Promise<boolean> {
+        const commentDeleted = await CommentModel.findOneAndDelete({
+            _id: commentId,
+            userId
+        });
+        if (!commentDeleted) {
+            throw new ServerError("Failed to delete comment");
+        }
+        return true;
     }
     async addReaction(
         commentId: string,
@@ -253,6 +263,50 @@ export class CommentRepositoryImpl implements CommentRepository {
         ) as Partial<Comment>[];
     }
 
+    async reportComment(
+        commentId: string,
+        userId: string,
+        reason: string
+    ): Promise<boolean> {
+        const comment = await CommentModel.findOne({ _id: commentId });
+        if (!comment) {
+            throw new ClientError("Comment not found", 404);
+        }
+        const report = await CommentReportModel.create({
+            commentId,
+            userId,
+            reason
+        });
+        if (!report) {
+            throw new ServerError("Failed to report comment", 500);
+        }
+        return true;
+    }
+
+    async getReportedComments(): Promise<Partial<Comment>[]> {
+        const reports = await CommentReportModel.aggregate([
+            { $match: { isReviewed: false } },
+            {
+                $group: {
+                    _id: "$commentId",
+                    count: { $sum: 1 },
+                    reason: { $addToSet: "$reason" }
+                }
+            },
+            { $sort: { count: -1 } },
+            {
+                $lookup: {
+                    from: "comments",
+                    localField: "_id",
+                    foreignField: "_id",
+                    as: "comment"
+                }
+            }
+        ]);
+        ConsoleLog.info(`reports are : ${JSON.stringify(reports)}`);
+        return reports;
+    }
+
     private _convertCommentDocumentToComment(
         commentDocument: PopulatedComment
     ): Partial<Comment> {
@@ -264,9 +318,13 @@ export class CommentRepositoryImpl implements CommentRepository {
             comment.user = {
                 userId: commentDocument.userId._id.toString(),
                 username: commentDocument.userId.username,
-                name: commentDocument.userId.name
+                name: commentDocument.userId.name,
+                avatar: commentDocument.userId.avatar
             };
-        if (commentDocument.text) comment.text = commentDocument.text;
+        if (commentDocument.text)
+            comment.text = commentDocument.censoredText || commentDocument.text;
+        if (commentDocument.censoredText)
+            comment.censoredText = commentDocument.censoredText;
         if (commentDocument.parentCommentId)
             comment.parentCommentId =
                 commentDocument.parentCommentId.toString();

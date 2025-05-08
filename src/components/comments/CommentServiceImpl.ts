@@ -1,5 +1,7 @@
 import { Reaction } from "../../constants/CommentReaction.js";
 import { ClientError, ServerError } from "../../utils/AppErrors.js";
+import { censorBadWords } from "../../utils/censorBadWords.js";
+import { ConsoleLog } from "../../utils/ConsoleLog.js";
 import { Comment, NewComment, NewReply } from "./Comment.js";
 import { CommentRepository } from "./CommentRepository.js";
 import { CommentService, Sort } from "./CommentService.js";
@@ -11,6 +13,7 @@ export class CommentServiceImpl implements CommentService {
         this._commentRepository = commentRepository;
     }
     async addComment(comment: NewComment): Promise<Comment | null> {
+        comment.censoredText = censorBadWords(comment.text);
         return await this._commentRepository.addComment(comment);
     }
     async getCommentsByGameId(
@@ -33,8 +36,8 @@ export class CommentServiceImpl implements CommentService {
     async getCommentsByUserId(userId: string): Promise<Comment[]> {
         throw new Error("Method not implemented.");
     }
-    async deleteComment(commentId: string): Promise<boolean> {
-        throw new Error("Method not implemented.");
+    async deleteComment(commentId: string, userId: string): Promise<boolean> {
+        return await this._commentRepository.deleteComment(commentId, userId);
     }
     async likeComment(commentId: string, userId: string): Promise<boolean> {
         const myReaction = await this._commentRepository.getMyReaction(
@@ -162,6 +165,7 @@ export class CommentServiceImpl implements CommentService {
         );
     }
     async addReply(reply: NewReply): Promise<Comment | null> {
+        reply.censoredText = censorBadWords(reply.text);
         const replyAdded = await this._commentRepository.addReply(reply);
 
         if (!replyAdded) {
@@ -214,5 +218,21 @@ export class CommentServiceImpl implements CommentService {
             if (!reaction) return { ...comment, myReaction: null };
             return { ...comment, myReaction: reaction.reaction };
         });
+    }
+
+    async reportComment(
+        commentId: string,
+        userId: string,
+        reason: string
+    ): Promise<boolean> {
+        return await this._commentRepository.reportComment(
+            commentId,
+            userId,
+            reason
+        );
+    }
+
+    async getReportedComments(): Promise<any> {
+        return await this._commentRepository.getReportedComments();
     }
 }
