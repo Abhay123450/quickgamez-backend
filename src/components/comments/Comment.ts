@@ -2,13 +2,14 @@ import { User } from "../users/User.js";
 
 export interface NewComment {
     text: string;
+    censoredText: string;
     game: string;
     userId: string;
 }
 
 export interface Comment extends Omit<NewComment, "userId"> {
     commentId: string;
-    user: Pick<User, "userId" | "username" | "name">;
+    user: Pick<User, "userId" | "username" | "name" | "avatar">;
     replyToComment: Pick<Comment, "commentId" | "user"> | null;
     parentCommentId: string | null;
     likeCount: number;

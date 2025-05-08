@@ -7,6 +7,7 @@ import { NewReply } from "./Comment.js";
 import { HttpStatusCode } from "../../constants/httpStatusCode.enum.js";
 import { parse } from "path";
 import { matchedData, validationResult } from "express-validator";
+import { ConsoleLog } from "../../utils/ConsoleLog.js";
 
 export class CommentControllerImpl implements CommentController {
     _commentService: CommentService;
@@ -28,6 +29,7 @@ export class CommentControllerImpl implements CommentController {
 
         const commentAdded = await this._commentService.addComment({
             text: comment,
+            censoredText: comment,
             game,
             userId: req.user.userId
         });
@@ -56,23 +58,39 @@ export class CommentControllerImpl implements CommentController {
         }
         const { game, page, limit, sort } = matchedData(req);
 
-        sendResponseSuccess(
-            res,
-            await this._commentService.getCommentsByGameId(
-                game,
-                page,
-                (limit as number) || 10,
-                Sort.OldestFirst,
-                req.user?.userId
-            )
+        const comments = await this._commentService.getCommentsByGameId(
+            game,
+            page,
+            (limit as number) || 10,
+            sort,
+            req.user?.userId
         );
+
+        ConsoleLog.info(`comments are ${JSON.stringify(comments)}`);
+
+        sendResponseSuccess(res, comments);
     }
     async deleteComment(
         req: Request,
         res: Response,
         next: NextFunction
     ): Promise<void> {
-        throw new Error("Method not implemented.");
+        const { commentId } = req.params;
+        const { userId } = req.user;
+        if (!commentId) {
+            throw new ValidationError(["Comment id is missing"]);
+        }
+        if (!userId) {
+            throw new ValidationError(["Login Required."]);
+        }
+        const commentDeleted = await this._commentService.deleteComment(
+            commentId,
+            userId
+        );
+        if (!commentDeleted) {
+            throw new ServerError("Failed to delete comment");
+        }
+        sendResponseSuccess(res, "Comment deleted successfully");
     }
     async likeComment(
         req: Request,
@@ -180,6 +198,7 @@ export class CommentControllerImpl implements CommentController {
         }
         const reply: NewReply = {
             text: comment,
+            censoredText: comment,
             game,
             replyToCommentId,
             parentCommentId,
@@ -215,5 +234,36 @@ export class CommentControllerImpl implements CommentController {
             req.user?.userId
         );
         sendResponseSuccess(res, replies);
+    }
+
+    async reportComment(req: Request, res: Response, next: NextFunction) {
+        const { commentId } = req.params;
+        const { userId } = req.user;
+        let { reason } = req.body;
+        reason = reason?.trim();
+        if (!commentId) {
+            throw new ValidationError(["Comment id is missing"]);
+        }
+        if (!userId) {
+            throw new ValidationError(["Login Required."]);
+        }
+        if (!reason || reason.length === 0) {
+            throw new ValidationError(["Reason is required"]);
+        }
+        const commentReported = await this._commentService.reportComment(
+            commentId,
+            userId,
+            reason
+        );
+        if (!commentReported) {
+            throw new ServerError("Failed to report comment");
+        }
+        sendResponseSuccess(res, "Comment reported successfully");
+    }
+
+    async getReportedComments(req: Request, res: Response, next: NextFunction) {
+        const reportedComments =
+            await this._commentService.getReportedComments();
+        sendResponseSuccess(res, reportedComments);
     }
 }

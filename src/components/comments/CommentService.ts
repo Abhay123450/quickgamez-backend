@@ -16,7 +16,7 @@ export interface CommentService {
         userId?: string
     ): Promise<Comment[]>;
     getCommentsByUserId(userId: string): Promise<Comment[]>;
-    deleteComment(commentId: string): Promise<boolean>;
+    deleteComment(commentId: string, userId: string): Promise<boolean>;
     likeComment(commentId: string, userId: string): Promise<boolean>;
     unlikeComment(commentId: string, userId: string): Promise<boolean>;
     dislikeComment(commentId: string, userId: string): Promise<boolean>;
@@ -28,4 +28,10 @@ export interface CommentService {
         limit: number,
         userId?: string
     ): Promise<Partial<Comment>[]>;
+    reportComment(
+        commentId: string,
+        userId: string,
+        reason: string
+    ): Promise<boolean>;
+    getReportedComments(): Promise<any>;
 }
