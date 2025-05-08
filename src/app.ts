@@ -10,7 +10,7 @@ import cookieParser from "cookie-parser";
 import { connectToDB } from "./config/db.config.js";
 import { ConsoleLog } from "./utils/ConsoleLog.js";
 import { sendResponseSuccess } from "./utils/sendResponse.js";
-import { movieRouter } from "./components/movies/movie.routes.js";
+import { movieRouter } from "./components/guess-the-movie/movies/movie.routes.js";
 
 import { errorHandler } from "./middlewares/errorHandler.js";
 import { userRouter } from "./components/users/user.route.js";
