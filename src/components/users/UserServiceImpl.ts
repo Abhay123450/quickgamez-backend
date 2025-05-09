@@ -1,17 +1,21 @@
 import { HttpStatusCode } from "../../constants/httpStatusCode.enum.js";
 import { UserAccountStatus } from "../../constants/userAccountStatus.enum.js";
 import { UserRole } from "../../constants/userRole.enum.js";
-import { ClientError } from "../../utils/AppErrors.js";
+import { ClientError, ServerError } from "../../utils/AppErrors.js";
 import { ConsoleLog } from "../../utils/ConsoleLog.js";
+import { generateSecureRandomString } from "../../utils/generateSecureRandomString.js";
 import { generateOtp } from "../../utils/otpUtil.js";
+import { EmailService } from "../email/EmailService.js";
 import { User } from "./User.js";
 import { UserRepository } from "./UserRepository.js";
 import { UserService } from "./UserService.js";
 
 export class UserServiceImpl implements UserService {
     private _userRepository: UserRepository;
-    constructor(userRepository: UserRepository) {
+    private _emailService: EmailService;
+    constructor(userRepository: UserRepository, emailService: EmailService) {
         this._userRepository = userRepository;
+        this._emailService = emailService;
     }
     async addUser(
         name: string,
@@ -29,8 +33,8 @@ export class UserServiceImpl implements UserService {
             );
         }
         if (!username) {
-            username = email.split("@")[0].replace(/\./g, "_");
-            username += generateOtp(5);
+            username = name.split(" ")[0].slice(0, 12);
+            username += generateSecureRandomString(12);
         }
         const user = {
             name: name,
@@ -44,7 +48,16 @@ export class UserServiceImpl implements UserService {
                 expiresAt: new Date(Date.now() + 15 * 60 * 1000) // 15 minutes
             }
         };
-        return await this._userRepository.addUser(user);
+        const userAdded = await this._userRepository.addUser(user);
+        if (!userAdded) {
+            throw new ServerError("Failed to add user");
+        }
+        this._emailService.sendRegistrationOtpEmail(
+            email,
+            name,
+            user.emailOtp.otp
+        );
+        return userAdded;
     }
 
     async getUsers(

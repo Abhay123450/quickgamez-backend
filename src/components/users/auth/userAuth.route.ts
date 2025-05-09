@@ -3,17 +3,21 @@ import { UserAuthControllerImpl } from "./UserAuthControllerImpl.js";
 import { UserRepositoryImpl } from "../UserRepositoryImpl.js";
 import { UserAuthServiceImpl } from "./UserAuthServiceImpl.js";
 import { catchAsycError } from "../../../middlewares/catchAsyncError.js";
-import {
-    authenticateUser,
-    decodeRefreshToken
-} from "../../../middlewares/userAuth.middleware.js";
+import { decodeRefreshToken } from "../../../middlewares/userAuth.middleware.js";
 import { blacklistToken } from "../../../middlewares/blacklistToken.middleware.js";
 import { validateEmail } from "../user.validate.js";
+import { UserServiceImpl } from "../UserServiceImpl.js";
+import { EmailServiceImpl } from "../../email/EmailServiceImpl.js";
 const router = Router();
 
 const userRepository = new UserRepositoryImpl();
-const userAuthService = new UserAuthServiceImpl(userRepository);
-const userAuthController = new UserAuthControllerImpl(userAuthService);
+const emailService = new EmailServiceImpl();
+const userAuthService = new UserAuthServiceImpl(userRepository, emailService);
+const userService = new UserServiceImpl(userRepository, emailService);
+const userAuthController = new UserAuthControllerImpl(
+    userAuthService,
+    userService
+);
 
 router
     .route("/auth/login")
@@ -40,6 +44,7 @@ router
 router
     .route("/auth/send-email-otp")
     .post(
+        validateEmail(),
         catchAsycError(
             userAuthController.sendOtpToEmail.bind(userAuthController)
         )

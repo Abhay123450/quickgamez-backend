@@ -11,10 +11,12 @@ import {
 import { userAuthRouter } from "./auth/userAuth.route.js";
 import { authenticateUser } from "../../middlewares/userAuth.middleware.js";
 import { UserServiceImpl } from "./UserServiceImpl.js";
+import { EmailServiceImpl } from "../email/EmailServiceImpl.js";
 const router = express.Router();
 
 const userRepository = new UserRepositoryImpl();
-const userService = new UserServiceImpl(userRepository);
+const emailService = new EmailServiceImpl();
+const userService = new UserServiceImpl(userRepository, emailService);
 const userController = new UserControllerImpl(userService);
 
 router.use("/users", userAuthRouter);

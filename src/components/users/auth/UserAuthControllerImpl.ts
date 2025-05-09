@@ -11,11 +11,14 @@ import {
     ValidationError
 } from "../../../utils/AppErrors.js";
 import { matchedData, validationResult } from "express-validator";
+import { UserService } from "../UserService.js";
 
 export class UserAuthControllerImpl implements UserAuthController {
     private _userAuthService: UserAuthService;
-    constructor(userAuthService: UserAuthService) {
+    private _userService: UserService;
+    constructor(userAuthService: UserAuthService, userService: UserService) {
         this._userAuthService = userAuthService;
+        this._userService = userService;
     }
 
     async login(req: Request, res: Response, next: NextFunction) {
@@ -25,10 +28,8 @@ export class UserAuthControllerImpl implements UserAuthController {
             throw new ClientError("Invalid credentials");
         }
 
-        const { accessToken, refreshToken } = await this._userAuthService.login(
-            username || email,
-            password
-        );
+        const { accessToken, refreshToken, user } =
+            await this._userAuthService.login(username || email, password);
 
         const refreshTokenValidity: number =
             Number(process.env.REFRESH_TOKEN_VALIDITY) ||
@@ -65,7 +66,8 @@ export class UserAuthControllerImpl implements UserAuthController {
                 accessToken,
                 accessTokenValidTill,
                 refreshToken,
-                refreshTokenValidTill
+                refreshTokenValidTill,
+                user
             });
         return;
     }
@@ -142,7 +144,13 @@ export class UserAuthControllerImpl implements UserAuthController {
         }
         const { email } = matchedData(req);
         console.log(`email: ${email}`);
-        const isEmailSent = await this._userAuthService.generateAndSaveEmailOtp(
+
+        const user = await this._userService.getUserByEmailOrUsername(email);
+        if (!user) {
+            throw new ClientError("User not found");
+        }
+
+        const isEmailSent = await this._userAuthService.saveAndSendEmailOtp(
             email
         );
         if (!isEmailSent) {

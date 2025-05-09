@@ -9,6 +9,7 @@ import {
 import { ConsoleLog } from "../../../utils/ConsoleLog.js";
 import { generateOtp } from "../../../utils/otpUtil.js";
 import { isPasswordMatched } from "../../../utils/passwordUtil.js";
+import { EmailService } from "../../email/EmailService.js";
 import { User } from "../User.js";
 import { UserRepository } from "../UserRepository.js";
 import { UserAuthService } from "./UserAuthService.js";
@@ -17,8 +18,10 @@ import jwt from "jsonwebtoken";
 
 export class UserAuthServiceImpl implements UserAuthService {
     private _userRepository: UserRepository;
-    constructor(userRepository: UserRepository) {
+    private _emailService: EmailService;
+    constructor(userRepository: UserRepository, emailService: EmailService) {
         this._userRepository = userRepository;
+        this._emailService = emailService;
     }
 
     async login(
@@ -27,11 +30,17 @@ export class UserAuthServiceImpl implements UserAuthService {
     ): Promise<{
         accessToken: string;
         refreshToken: string;
+        user: Partial<User>;
     }> {
         const user: Partial<User> | null =
             await this._userRepository.getUserByEmailOrUsername(userId, [
                 "password",
-                "accountStatus"
+                "accountStatus",
+                "username",
+                "name",
+                "email",
+                "role",
+                "createdAt"
             ]);
 
         if (!user || !user.password || !user.userId) {
@@ -78,7 +87,9 @@ export class UserAuthServiceImpl implements UserAuthService {
             throw new ServerError("Failed to save token.");
         }
 
-        return { accessToken, refreshToken };
+        delete user.password;
+
+        return { accessToken, refreshToken, user };
     }
 
     async logout(userId: string, refreshToken: string) {
@@ -140,15 +151,16 @@ export class UserAuthServiceImpl implements UserAuthService {
         return true;
     }
 
-    async generateAndSaveEmailOtp(email: string): Promise<boolean> {
+    async saveAndSendEmailOtp(email: string): Promise<boolean> {
         const otp = generateOtp(6);
         ConsoleLog.info(`Otp: ${otp}`);
         const otpSaved = await this._userRepository.saveOtp(email, otp);
         if (!otpSaved) {
             throw new ServerError(`Failed to save otp for email: ${email}`);
         }
-        return true;
         //  send email
+        this._emailService.sendVerificationOTPEmail(email, otp);
+        return true;
     }
 
     async resetPassword(
@@ -156,11 +168,15 @@ export class UserAuthServiceImpl implements UserAuthService {
         otp: number,
         newPassword: string
     ): Promise<boolean> {
-        return await this._userRepository.updatePassword(
+        const isPasswordUpdated = await this._userRepository.updatePassword(
             email,
             otp,
             newPassword
         );
+        if (isPasswordUpdated) {
+            this._emailService.sendPasswordChangedEmail(email);
+        }
+        return isPasswordUpdated;
     }
 
     private _isOtpValid(
