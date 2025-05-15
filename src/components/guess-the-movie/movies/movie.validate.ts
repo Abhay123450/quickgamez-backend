@@ -1,5 +1,5 @@
 import { body, CustomValidator, query } from "express-validator";
-import { isValidDate } from "../../../utils/dateUtil.js";
+import { isValidDateDDMMYYYY } from "../../../utils/dateUtil.js";
 import { Difficulty } from "../../../constants/Difficulty.js";
 
 export const validateGetRandomMovieReq = () => [
@@ -103,7 +103,7 @@ export const validateAddMovieReq = () => [
     body("releaseDate")
         .trim()
         .escape()
-        .custom(isValidDate as CustomValidator)
+        .custom(isValidDateDDMMYYYY as CustomValidator)
         .withMessage("Invalid date format. Date must be in dd-mm-yyyy format.")
         .customSanitizer((date) => {
             const parts = date.split("-");
@@ -202,7 +202,7 @@ export const validateAddMoviesReq = () => [
     body("movies.*.releaseDate")
         .trim()
         .escape()
-        .custom(isValidDate as CustomValidator)
+        .custom(isValidDateDDMMYYYY as CustomValidator)
         .withMessage("Invalid date format. Date must be in dd-mm-yyyy format.")
         .customSanitizer((date) => {
             const parts = date.split("-");

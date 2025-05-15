@@ -5,7 +5,9 @@ import { CustomValidator } from "express-validator";
  * @param {string} dateString - The date string to validate.
  * @returns {boolean} True if valid, otherwise throws an error.
  */
-export const isValidDate: CustomValidator = (dateString: string): boolean => {
+export const isValidDateDDMMYYYY: CustomValidator = (
+    dateString: string
+): boolean => {
     const regex = /^(\d{2})-(\d{2})-(\d{4})$/;
     const parts = dateString.match(regex);
 
@@ -32,3 +34,8 @@ export const isValidDate: CustomValidator = (dateString: string): boolean => {
 
     return true;
 };
+
+export function isValidDateString(value: any): boolean {
+    const date = new Date(value);
+    return !isNaN(date.getTime());
+}
