@@ -9,7 +9,11 @@ export const validateGetCommentsReq = () => [
         .isString()
         .withMessage('"game" must be a string')
         .custom((game) => {
-            const games = ["guess-the-movie"];
+            const games = [
+                "guess-the-movie",
+                "guess-the-movie-hollywood",
+                "guess-the-movie-bollywood"
+            ];
             if (!games.includes(game)) {
                 throw new Error(
                     `"game" must be one of the following: ${games}`

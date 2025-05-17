@@ -65,6 +65,16 @@ export const errorHandler = (
                 message: "Internal server error",
                 errorCode: ErrorCode.INTERNAL_SERVER_ERROR
             });
+        } else if (
+            err instanceof SyntaxError &&
+            (err as any)?.status === 400 &&
+            "body" in err
+        ) {
+            res.status(HttpStatusCode.BAD_REQUEST).json({
+                success: false,
+                message: "Invalid JSON",
+                errorCode: ErrorCode.BAD_REQUEST
+            });
         } else {
             res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).json({
                 success: false,
