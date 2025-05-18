@@ -9,7 +9,7 @@ export interface NewComment {
 
 export interface Comment extends Omit<NewComment, "userId"> {
     commentId: string;
-    user: Pick<User, "userId" | "username" | "name" | "avatar">;
+    user: Pick<User, "userId" | "username" | "name" | "avatar"> | null;
     replyToComment: Pick<Comment, "commentId" | "user"> | null;
     parentCommentId: string | null;
     likeCount: number;

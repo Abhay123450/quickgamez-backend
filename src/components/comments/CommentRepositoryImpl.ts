@@ -76,12 +76,11 @@ export class CommentRepositoryImpl implements CommentRepository {
                 "username name avatar"
             );
         if (!comments) return [];
-        // return comments as Partial<Comment>[];
-        return comments.map((comment) =>
-            this._convertCommentDocumentToComment(
+        return comments.map((comment) => {
+            return this._convertCommentDocumentToComment(
                 comment as unknown as PopulatedComment
-            )
-        ) as Partial<Comment>[];
+            );
+        }) as Partial<Comment>[];
     }
     async getCommentsByUserId(userId: string): Promise<Comment[]> {
         throw new Error("Method not implemented.");
@@ -314,13 +313,16 @@ export class CommentRepositoryImpl implements CommentRepository {
         const comment: Partial<Comment> = {};
         if (commentDocument._id)
             comment.commentId = commentDocument._id.toString();
-        if (commentDocument.userId)
+        if (commentDocument.userId) {
             comment.user = {
                 userId: commentDocument.userId._id.toString(),
                 username: commentDocument.userId.username,
                 name: commentDocument.userId.name,
                 avatar: commentDocument.userId.avatar
             };
+        } else {
+            comment.user = null;
+        }
         if (commentDocument.text)
             comment.text = commentDocument.censoredText || commentDocument.text;
         if (commentDocument.censoredText)
