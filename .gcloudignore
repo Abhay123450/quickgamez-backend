@@ -18,3 +18,7 @@ node_modules/
 
 # Source folder (TypeScript)
 src/
+
+# extra
+movieList.json
+help.text

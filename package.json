@@ -1,11 +1,12 @@
 {
-    "name": "typescript-express-mongo-mvc",
+    "name": "quickgamez-backend",
     "version": "1.0.0",
     "description": "",
     "main": "app.js",
     "type": "module",
     "scripts": {
         "build": "rimraf dist && npx tsc",
+        "gcp-build": "",
         "start": "node dist/app.js",
         "predev": "npm run build",
         "dev": "concurrently \"tsc -w\" \"nodemon dist/app.js\""
