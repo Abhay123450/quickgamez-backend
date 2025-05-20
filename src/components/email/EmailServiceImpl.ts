@@ -3,7 +3,7 @@ import { EmailService } from "./EmailService.js";
 import SMTPTransport from "nodemailer/lib/smtp-transport/index.js";
 
 const PRIVACY_POLICY_URL = "https://quickgamez.com/privacy-policy";
-const TERMS_OF_SERVICE_URL = "https://quickgamez.com/terms-of-service";
+const TERMS_OF_USE_URL = "https://quickgamez.com/terms-of-use";
 const CONTACT_US_URL = "https://quickgamez.com/contact-us";
 const COMPANY_NAME = "QuickGamez";
 const CONTACT_EMAIL = "contact@quickgamez.com";
@@ -30,7 +30,15 @@ export class EmailServiceImpl implements EmailService {
         html: string,
         text: string
     ): Promise<void> {
-        throw new Error("Method not implemented.");
+        const transporter = this._getTransporter();
+        const info = await transporter.sendMail({
+            from: `"QuickGamez" <hello@quickgamez.com>`,
+            to,
+            subject,
+            html,
+            text
+        });
+        console.log("Message sent: %s", info.messageId);
     }
     async sendWelcomeEmail(to: string, name: string): Promise<void> {
         const html = `<!DOCTYPE html>
@@ -51,10 +59,10 @@ export class EmailServiceImpl implements EmailService {
                                 <!-- Item 1 -->
                                 <tr>
                                     <td colspan="2" style="padding: 10px 0;">
-                                    <a href="https://quickgamez.com/game/1" style="text-decoration: none; color: #000; display: flex; align-items: center;">
-                                        <img src="https://quickgamez.com/images/guess-the-movie-logo.webp" alt="Game 1" style="width: 20%; max-width: 150px; border-radius: 4px; margin-right: 10px;" />
+                                    <a href="https://quickgamez.com/games/guess-the-movie/hollywood" style="text-decoration: none; color: #000; display: flex; align-items: center;">
+                                        <img src="https://quickgamez.com/images/thumbnail/guess-the-movie-hollywood.webp" alt="Guess The Movie - Hollywood" style="width: 20%; max-width: 150px; border-radius: 4px; margin-right: 10px;" />
                                         <div style="width: 80%;">
-                                        <strong style="font-size: 16px;">Guess the movie</strong>
+                                        <strong style="font-size: 16px;">Guess the movie - Hollywood</strong>
                                         <p style="margin: 5px 0; font-size: 14px; color: #555;">Fast-paced arcade action with epic powerups.</p>
                                         </div>
                                     </a>
@@ -87,7 +95,7 @@ export class EmailServiceImpl implements EmailService {
                                 <p style="font-size: 12px; color: #666; text-align: center; margin-top: 10px;">
                                 <a href="https://quickgamez.com/privacy" style="color: #dc2626; text-decoration: none;">Privacy Policy</a>
                                 &nbsp;|&nbsp;
-                                <a href="https://quickgamez.com/terms" style="color: #dc2626; text-decoration: none;">Terms of Service</a>
+                                <a href="https://quickgamez.com/terms" style="color: #dc2626; text-decoration: none;">Terms of Use</a>
                                 </p>
                             </td>
                             </tr>
@@ -176,9 +184,9 @@ export class EmailServiceImpl implements EmailService {
                             <p style="font-size: 12px; color: #666; text-align: center; margin-top: 10px;">
                             <a href="${PRIVACY_POLICY_URL}" style="color: #dc2626; text-decoration: none;">Privacy Policy</a>
                             &nbsp;|&nbsp;
-                            <a href="${TERMS_OF_SERVICE_URL}" style="color: #dc2626; text-decoration: none;">Terms of Service</a>
+                            <a href="${TERMS_OF_USE_URL}" style="color: #dc2626; text-decoration: none;">Terms of Use</a>
                             </p>
-                            &copy; ${new Date().getFullYear()} QuickGamez. All rights reserved.
+                            <p style="font-size: 12px; color: #666; text-align: center; margin-top: 10px;">&copy; ${new Date().getFullYear()} QuickGamez. All rights reserved.</p>
                             </div>
                         </div>
                         </body>
@@ -271,9 +279,11 @@ export class EmailServiceImpl implements EmailService {
                             <p style="font-size: 12px; color: #666; text-align: center; margin-top: 10px;">
                             <a href="${PRIVACY_POLICY_URL}" style="color: #dc2626; text-decoration: none;">Privacy Policy</a>
                             &nbsp;|&nbsp;
-                            <a href="${TERMS_OF_SERVICE_URL}" style="color: #dc2626; text-decoration: none;">Terms of Service</a>
+                            <a href="${TERMS_OF_USE_URL}" style="color: #dc2626; text-decoration: none;">Terms of Use</a>
                             </p>
+                            <p style="font-size: 12px; color: #666; text-align: center; margin-top: 10px;">
                             &copy; ${new Date().getFullYear()} QuickGamez. All rights reserved.
+                            </p>
                             </div>
                         </div>
                         </body>
@@ -366,7 +376,7 @@ export class EmailServiceImpl implements EmailService {
                             <p style="font-size: 12px; color: #666; text-align: center; margin-top: 10px;">
                             <a href="${PRIVACY_POLICY_URL}" style="color: #dc2626; text-decoration: none;">Privacy Policy</a>
                             &nbsp;|&nbsp;
-                            <a href="${TERMS_OF_SERVICE_URL}" style="color: #dc2626; text-decoration: none;">Terms of Service</a>
+                            <a href="${TERMS_OF_USE_URL}" style="color: #dc2626; text-decoration: none;">Terms of Use</a>
                             </p>
                             &copy; ${new Date().getFullYear()} QuickGamez. All rights reserved.
                             </div>
@@ -442,7 +452,7 @@ export class EmailServiceImpl implements EmailService {
                             <p style="font-size: 12px; color: #666; text-align: center; margin-top: 10px;">
                             <a href="${PRIVACY_POLICY_URL}" style="color: #dc2626; text-decoration: none;">Privacy Policy</a>
                             &nbsp;|&nbsp;
-                            <a href="${TERMS_OF_SERVICE_URL}" style="color: #dc2626; text-decoration: none;">Terms of Service</a>
+                            <a href="${TERMS_OF_USE_URL}" style="color: #dc2626; text-decoration: none;">Terms of Use</a>
                             </p>
                             &copy; ${new Date().getFullYear()} QuickGamez. All rights reserved.
                             </div>
@@ -461,5 +471,111 @@ export class EmailServiceImpl implements EmailService {
         });
 
         console.log("Message sent: ", info);
+    }
+
+    async sendContactUsMessageToEmail(
+        name: string,
+        email: string,
+        subject: string,
+        message: string
+    ): Promise<void> {
+        const html = `<!DOCTYPE html>
+        <html lang="en">
+        <head>
+        <meta charset="UTF-8">
+        <title>Email Verification OTP</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+            body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background-color: #f4f4f7;
+            margin: 0;
+            padding: 0;
+            }
+            .container {
+            background-color: #fef9c3;
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            h1 {
+            color: #333333;
+            }
+            .otp {
+            font-size: 24px;
+            font-weight: bold;
+            color: #dc2626;
+            letter-spacing: 4px;
+            margin: 20px 0;
+            }
+            .footer {
+            font-size: 12px;
+            color: #888888;
+            text-align: center;
+            margin-top: 30px;
+            }
+            .button {
+            display: inline-block;
+            padding: 12px 20px;
+            background-color: #4a90e2;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+            }
+            @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+                margin: 20px;
+            }
+            }
+        </style>
+        </head>
+        <body>
+        <div class="container">
+            <h1>Contact Us - QuickGamez.com</h1>
+            <p>From: </p>
+            <p>Name: ${name}</p>
+            <p>Email: ${email}</p>
+            <p>Subject: ${subject}</p>
+            <p>Message:</p>
+            <p>${message}</p>
+            <div class="footer">
+            <hr style="margin-top: 30px; border: none; border-top: 1px solid #ddd;" />
+
+            <p style="font-size: 12px; color: #666; text-align: center;">
+            Need help? Contact us at
+            <a href="mailto:${CONTACT_EMAIL}" style="color: #dc2626; text-decoration: none;">
+                ${CONTACT_EMAIL}
+            </a>
+            </p>
+
+            <p style="font-size: 12px; color: #666; text-align: center; margin-top: 10px;">
+            <a href="${PRIVACY_POLICY_URL}" style="color: #dc2626; text-decoration: none;">Privacy Policy</a>
+            &nbsp;|&nbsp;
+            <a href="${TERMS_OF_USE_URL}" style="color: #dc2626; text-decoration: none;">Terms of Use</a>
+            </p>
+            &copy; ${new Date().getFullYear()} QuickGamez. All rights reserved.
+            </div>
+        </div>
+        </body>
+        </html>
+        `;
+
+        const recipients = [CONTACT_EMAIL];
+        if (process.env.PERSONAL_EMAIL) {
+            recipients.push(process.env.PERSONAL_EMAIL);
+        }
+
+        const info = await this._getTransporter().sendMail({
+            from: `"QuickGamez" <hello@quickgamez.com>`,
+            to: recipients,
+            subject: "Contact Us - QuickGamez.com",
+            html
+        });
+
+        console.log("Email status: ", info);
     }
 }

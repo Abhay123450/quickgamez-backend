@@ -14,4 +14,10 @@ export interface EmailService {
         otp: number
     ): Promise<void>;
     sendPasswordChangedEmail(to: string): Promise<void>;
+    sendContactUsMessageToEmail(
+        name: string,
+        email: string,
+        subject: string,
+        message: string
+    ): void;
 }
