@@ -15,6 +15,10 @@ import { movieRouter } from "./components/guess-the-movie/movies/movie.routes.js
 import { errorHandler } from "./middlewares/errorHandler.js";
 import { userRouter } from "./components/users/user.route.js";
 import { commentRouter } from "./components/comments/comment.route.js";
+import { gtmResultRouter } from "./components/guess-the-movie/result/gtmResult.route.js";
+import { leaderboardRouter } from "./components/guess-the-movie/leaderboard/leaderboard.route.js";
+import { notificationRouter } from "./components/notifications/notification.route.js";
+import { contactUsRouter } from "./components/contact-us/contactUs.route.js";
 
 const port: number = Number(process.env.PORT) || 4000;
 
@@ -27,9 +31,11 @@ app.use(
             "http://192.168.1.6:5173",
             "http://localhost:5173",
             "http://192.168.1.7:5173",
+            "http://192.168.1.8:5173",
             "http://192.168.1.4:5173",
             "http://192.168.1.5:5173",
-            "http://192.168.56.1:5173"
+            "http://192.168.56.1:5173",
+            "http://192.168.1.5:4173"
         ]
     })
 );
@@ -56,6 +62,10 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 app.use("/api/v1", movieRouter);
 app.use("/api/v1", userRouter);
 app.use("/api/v1", commentRouter);
+app.use("/api/v1", gtmResultRouter);
+app.use("/api/v1", leaderboardRouter);
+app.use("/api/v1", notificationRouter);
+app.use("/api/v1", contactUsRouter);
 
 app.get("/api/v1/health-check", (req: Request, res: Response) => {
     sendResponseSuccess(res, "Server is up and running");
