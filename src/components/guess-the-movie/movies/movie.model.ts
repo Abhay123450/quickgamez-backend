@@ -57,7 +57,7 @@ const movieSchema = new Schema<MovieDocument>(
             trim: true
         },
         boxOfficeCollection: {
-            type: String
+            type: Number
         },
         hints: [
             {
@@ -70,6 +70,8 @@ const movieSchema = new Schema<MovieDocument>(
         timestamps: true
     }
 );
+
+movieSchema.index({ name: 1, releaseDate: 1 }, { unique: true });
 
 movieSchema.methods.toJSON = function () {
     const movie = this.toObject();

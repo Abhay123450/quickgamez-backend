@@ -19,6 +19,6 @@ export interface Movie {
     genre: string[];
     productionHouse: string;
     boxOfficeStatus: string; // hit, flop etc...
-    boxOfficeCollection: string;
+    boxOfficeCollection: number;
     hints: string[];
 }

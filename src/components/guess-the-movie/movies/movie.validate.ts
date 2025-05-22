@@ -159,6 +159,11 @@ export const validateAddMovieReq = () => [
         .withMessage("Box office status cannot be empty.")
         .matches(/^[a-zA-Z ]+$/)
         .withMessage("Box office status can only contain letters."),
+    body("boxOfficeCollection")
+        .isNumeric()
+        .withMessage("boxOfficeCollection is required.")
+        .custom((boxOfficeCollection) => boxOfficeCollection > 0)
+        .withMessage("Box office collection must be a number greater than 0."),
     body("hints")
         .isArray()
         .withMessage("Hints must be an array")
