@@ -4,9 +4,18 @@ import { matchedData, validationResult } from "express-validator";
 import { ValidationError } from "../../../utils/AppErrors.js";
 import { LeaderboardService } from "./LeaderboardService.js";
 import { sendResponseSuccess } from "../../../utils/sendResponse.js";
+import { Leaderboard } from "./Leaderboard.js";
 
+const ONE_MINUTE = 60 * 1000;
 export class LeaderboardControllerImpl implements LeaderboardController {
     private _leaderboardService: LeaderboardService;
+    private _cache: Map<
+        string,
+        {
+            leaderboard: Leaderboard;
+            timestamp: number;
+        }
+    > = new Map();
 
     constructor(leaderboardService: LeaderboardService) {
         this._leaderboardService = leaderboardService;
@@ -20,12 +29,23 @@ export class LeaderboardControllerImpl implements LeaderboardController {
         }
         const { time, count } = matchedData(req);
 
+        const cacheKey = `${time}-${count}-all`;
+        const cachedLeaderboard = this._cache.get(cacheKey);
+        if (
+            cachedLeaderboard &&
+            cachedLeaderboard.timestamp > Date.now() - ONE_MINUTE
+        ) {
+            return sendResponseSuccess(res, cachedLeaderboard.leaderboard);
+        }
+
         const leaderboard = await this._leaderboardService.getLeaderboard(
             time,
             count
         );
 
         sendResponseSuccess(res, leaderboard);
+
+        this._cache.set(cacheKey, { leaderboard, timestamp: Date.now() });
     }
 
     async getBollywoodLeaderboard(
@@ -40,6 +60,15 @@ export class LeaderboardControllerImpl implements LeaderboardController {
         }
         const { time, count } = matchedData(req);
 
+        const cacheKey = `${time}-${count}-bollywood`;
+        const cachedLeaderboard = this._cache.get(cacheKey);
+        if (
+            cachedLeaderboard &&
+            cachedLeaderboard.timestamp > Date.now() - ONE_MINUTE
+        ) {
+            return sendResponseSuccess(res, cachedLeaderboard.leaderboard);
+        }
+
         const leaderboard = await this._leaderboardService.getLeaderboard(
             time,
             count,
@@ -47,6 +76,8 @@ export class LeaderboardControllerImpl implements LeaderboardController {
         );
 
         sendResponseSuccess(res, leaderboard);
+
+        this._cache.set(cacheKey, { leaderboard, timestamp: Date.now() });
     }
 
     async getHollywoodLeaderboard(
@@ -61,6 +92,15 @@ export class LeaderboardControllerImpl implements LeaderboardController {
         }
         const { time, count } = matchedData(req);
 
+        const cacheKey = `${time}-${count}-hollywood`;
+        const cachedLeaderboard = this._cache.get(cacheKey);
+        if (
+            cachedLeaderboard &&
+            cachedLeaderboard.timestamp > Date.now() - ONE_MINUTE
+        ) {
+            return sendResponseSuccess(res, cachedLeaderboard.leaderboard);
+        }
+
         const leaderboard = await this._leaderboardService.getLeaderboard(
             time,
             count,
@@ -68,5 +108,7 @@ export class LeaderboardControllerImpl implements LeaderboardController {
         );
 
         sendResponseSuccess(res, leaderboard);
+
+        this._cache.set(cacheKey, { leaderboard, timestamp: Date.now() });
     }
 }
