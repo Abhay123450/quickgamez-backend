@@ -8,12 +8,20 @@ import { blacklistToken } from "../../../middlewares/blacklistToken.middleware.j
 import { validateEmail } from "../user.validate.js";
 import { UserServiceImpl } from "../UserServiceImpl.js";
 import { EmailServiceImpl } from "../../email/EmailServiceImpl.js";
+import { NotificationServiceImpl } from "../../notifications/NotificationServiceImpl.js";
+import { NotificationRepositoryImpl } from "../../notifications/NotificationRepositoryImpl.js";
 const router = Router();
 
 const userRepository = new UserRepositoryImpl();
 const emailService = new EmailServiceImpl();
+const notificationRepository = new NotificationRepositoryImpl();
+const notificationService = new NotificationServiceImpl(notificationRepository);
 const userAuthService = new UserAuthServiceImpl(userRepository, emailService);
-const userService = new UserServiceImpl(userRepository, emailService);
+const userService = new UserServiceImpl(
+    userRepository,
+    emailService,
+    notificationService
+);
 const userAuthController = new UserAuthControllerImpl(
     userAuthService,
     userService

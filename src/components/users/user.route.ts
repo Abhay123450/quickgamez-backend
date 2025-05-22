@@ -12,11 +12,19 @@ import { userAuthRouter } from "./auth/userAuth.route.js";
 import { authenticateUser } from "../../middlewares/userAuth.middleware.js";
 import { UserServiceImpl } from "./UserServiceImpl.js";
 import { EmailServiceImpl } from "../email/EmailServiceImpl.js";
+import { NotificationRepositoryImpl } from "../notifications/NotificationRepositoryImpl.js";
+import { NotificationServiceImpl } from "../notifications/NotificationServiceImpl.js";
 const router = express.Router();
 
 const userRepository = new UserRepositoryImpl();
 const emailService = new EmailServiceImpl();
-const userService = new UserServiceImpl(userRepository, emailService);
+const notificationRepository = new NotificationRepositoryImpl();
+const notificationService = new NotificationServiceImpl(notificationRepository);
+const userService = new UserServiceImpl(
+    userRepository,
+    emailService,
+    notificationService
+);
 const userController = new UserControllerImpl(userService);
 
 router.use("/users", userAuthRouter);

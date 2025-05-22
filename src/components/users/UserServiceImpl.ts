@@ -6,6 +6,7 @@ import { ConsoleLog } from "../../utils/ConsoleLog.js";
 import { generateSecureRandomString } from "../../utils/generateSecureRandomString.js";
 import { generateOtp } from "../../utils/otpUtil.js";
 import { EmailService } from "../email/EmailService.js";
+import { NotificationService } from "../notifications/NotificationService.js";
 import { User } from "./User.js";
 import { UserRepository } from "./UserRepository.js";
 import { UserService } from "./UserService.js";
@@ -13,9 +14,15 @@ import { UserService } from "./UserService.js";
 export class UserServiceImpl implements UserService {
     private _userRepository: UserRepository;
     private _emailService: EmailService;
-    constructor(userRepository: UserRepository, emailService: EmailService) {
+    private _notificationService: NotificationService;
+    constructor(
+        userRepository: UserRepository,
+        emailService: EmailService,
+        notificationService: NotificationService
+    ) {
         this._userRepository = userRepository;
         this._emailService = emailService;
+        this._notificationService = notificationService;
     }
     async addUser(
         name: string,
@@ -57,6 +64,20 @@ export class UserServiceImpl implements UserService {
             name,
             user.emailOtp.otp
         );
+        this._notificationService.createNewNotification({
+            userId: userAdded.userId,
+            message: "Claim your unique username now!",
+            type: "important",
+            payload: null,
+            action: "open_profile"
+        });
+        this._notificationService.createNewNotification({
+            userId: userAdded.userId,
+            message: "Change your avatar!",
+            type: "normal",
+            payload: null,
+            action: "open_profile"
+        });
         return userAdded;
     }
 
