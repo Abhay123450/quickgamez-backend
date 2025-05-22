@@ -46,7 +46,7 @@ export class UserAuthServiceImpl implements UserAuthService {
         if (!user || !user.password || !user.userId) {
             throw new AuthenticationError(
                 "Invalid Username or Password.",
-                ErrorCode.USER_NOT_FOUND
+                ErrorCode.INVALID_CREDENTIALS
             );
         }
 
