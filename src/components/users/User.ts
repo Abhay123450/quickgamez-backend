@@ -14,17 +14,19 @@ export interface UserAuth {
         expiresAt: Date;
     };
     googleId?: string;
+    authProvider: "google" | "email";
 }
 export interface UserDetails {
     username: string;
-    name?: string;
+    name: string;
     email: string;
     phone?: number;
-    password: string;
+    password?: string;
     role: UserRole;
     accountStatus: UserAccountStatus;
     createdAt: Date;
     avatar?: string;
+    profileImage?: string | null;
 }
 export interface User extends UserDetails, UserAuth {
     userId: string;

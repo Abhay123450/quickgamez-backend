@@ -16,7 +16,11 @@ const userRepository = new UserRepositoryImpl();
 const emailService = new EmailServiceImpl();
 const notificationRepository = new NotificationRepositoryImpl();
 const notificationService = new NotificationServiceImpl(notificationRepository);
-const userAuthService = new UserAuthServiceImpl(userRepository, emailService);
+const userAuthService = new UserAuthServiceImpl(
+    userRepository,
+    emailService,
+    notificationService
+);
 const userService = new UserServiceImpl(
     userRepository,
     emailService,
@@ -30,6 +34,14 @@ const userAuthController = new UserAuthControllerImpl(
 router
     .route("/auth/login")
     .post(catchAsycError(userAuthController.login.bind(userAuthController)));
+
+router
+    .route("/auth/google")
+    .post(
+        catchAsycError(
+            userAuthController.signinWithGoogle.bind(userAuthController)
+        )
+    );
 
 router
     .route("/auth/access-token")

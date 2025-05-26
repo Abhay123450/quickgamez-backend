@@ -47,7 +47,16 @@ export const userSchema = new Schema<UserDocument>(
             enum: Object.values(UserAccountStatus),
             default: UserAccountStatus.UNVERIFIED
         },
-        googleId: String,
+        googleId: {
+            type: String,
+            unique: true
+        },
+        authProvider: {
+            type: String,
+            required: true,
+            enum: ["google", "email"],
+            default: "email"
+        },
         refreshTokens: [String],
         deviceTokens: [
             {
@@ -61,6 +70,9 @@ export const userSchema = new Schema<UserDocument>(
         },
         avatar: {
             type: String
+        },
+        profileImage: {
+            type: String
         }
     },
     {
@@ -69,8 +81,17 @@ export const userSchema = new Schema<UserDocument>(
 );
 
 userSchema.pre("save", async function (next) {
-    if (this.isModified("password")) {
+    if (this.password && this.isModified("password")) {
         this.password = await hashPassword(this.password);
+    }
+    next();
+});
+
+userSchema.pre("validate", function (next) {
+    if (this.authProvider === "email" && !this.password) {
+        throw new Error("Password is required for email authentication.");
+    } else if (this.authProvider === "google" && !this.googleId) {
+        throw new Error("Google ID is required for Google authentication.");
     }
     next();
 });

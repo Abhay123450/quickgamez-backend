@@ -12,10 +12,13 @@ import {
 } from "../../../utils/AppErrors.js";
 import { matchedData, validationResult } from "express-validator";
 import { UserService } from "../UserService.js";
-
+import { OAuth2Client } from "google-auth-library";
 export class UserAuthControllerImpl implements UserAuthController {
     private _userAuthService: UserAuthService;
     private _userService: UserService;
+    private _googleClient = new OAuth2Client(
+        process.env.GOOGLE_CLIENT_ID as string
+    );
     constructor(userAuthService: UserAuthService, userService: UserService) {
         this._userAuthService = userAuthService;
         this._userService = userService;
@@ -207,5 +210,102 @@ export class UserAuthControllerImpl implements UserAuthController {
         }
 
         sendResponseSuccess(res, "Password updated successfully");
+    }
+
+    async signinWithGoogle(req: Request, res: Response, next: NextFunction) {
+        const { idToken } = req.body;
+        console.log("------------------------------------------------");
+        ConsoleLog.info(`google login body: ${JSON.stringify(idToken)}`);
+        const credentials = this._decodeJWT(idToken);
+        // const token = credentials;
+        ConsoleLog.info(`req.headers: ${JSON.stringify(req.headers)}`);
+        console.log(`decodedn data: ${JSON.stringify(credentials)}`);
+
+        console.log("------------------------------------------------");
+
+        const ticket = await this._googleClient.verifyIdToken({
+            idToken: idToken,
+            audience: process.env.WEB_CLIENT_ID
+        });
+        const payload = ticket.getPayload();
+        if (!payload) {
+            throw new ClientError("Payload not found");
+        }
+
+        if (!payload.email_verified) {
+            throw new ClientError("Email not verified");
+        }
+
+        // "iss":"https://accounts.google.com","azp":"231088337140-j5qomdu7q1q1aa2bfmc0kpircbiqt732.apps.googleusercontent.com","aud":"231088337140-j5qomdu7q1q1aa2bfmc0kpircbiqt732.apps.googleusercontent.com","sub":"111837340735816710941","email":"abhay123450@gmail.com","email_verified":true,"nbf":1748164290,"name":"Abhay Anand","picture":"https://lh3.googleusercontent.com/a/ACg8ocKmDHt5lMMlvffbFBf9m7KOz-D8AyzRAhnOhc632P_EA05OHw=s96-c","given_name":"Abhay","family_name":"Anand","iat":1748164590,"exp":1748168190,"jti":"830cf8163af07aba259227a74fc9233ddcfea744"
+        const userGoogleId = payload["sub"];
+        const name = payload["name"];
+        const email = payload["email"];
+        const picture = payload["picture"];
+
+        ConsoleLog.info(`name: ${name}, email: ${email}, picture: ${picture}`);
+
+        if (!name || !email || !userGoogleId) {
+            throw new ClientError("Error in getting user details");
+        }
+
+        const { accessToken, refreshToken, user } =
+            await this._userAuthService.signinWithGoogle({
+                name,
+                email,
+                googleId: userGoogleId,
+                profileImage: picture
+            });
+
+        const refreshTokenValidity: number =
+            Number(process.env.REFRESH_TOKEN_VALIDITY) ||
+            120 * 24 * 60 * 60 * 1000; // 120 days;
+        const refreshTokenValidTill: number = Date.now() + refreshTokenValidity;
+        const accessTokenValidity: number =
+            Number(process.env.ACCESS_TOKEN_VALIDITY) || 60 * 60 * 1000; // 1 hour
+
+        const accessTokenValidTill: number =
+            parseInt(Date.now().toString()) +
+            parseInt(accessTokenValidity.toString());
+
+        res.cookie("refreshToken", refreshToken, {
+            httpOnly: true,
+            maxAge: refreshTokenValidity
+        })
+            .cookie("refreshTokenValidTill", refreshTokenValidTill, {
+                httpOnly: false,
+                maxAge: refreshTokenValidity
+            })
+            .cookie("accessToken", accessToken, {
+                httpOnly: true,
+                maxAge: accessTokenValidity
+            })
+            .cookie("accessTokenValidTill", accessTokenValidTill, {
+                httpOnly: false,
+                maxAge: accessTokenValidity
+            })
+            .status(HttpStatusCode.OK)
+            .json({
+                success: true,
+                message: "Login successful",
+                accessTokenValidTill,
+                refreshTokenValidTill,
+                user
+            });
+    }
+
+    private _decodeJWT(token: any) {
+        let base64Url = token.split(".")[1];
+        let base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+        let jsonPayload = decodeURIComponent(
+            atob(base64)
+                .split("")
+                .map(function (c) {
+                    return (
+                        "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2)
+                    );
+                })
+                .join("")
+        );
+        return JSON.parse(jsonPayload);
     }
 }

@@ -2,7 +2,17 @@ import { User } from "./User.js";
 
 export interface UserRepository {
     addUser(
-        user: Pick<User, "name" | "email" | "password" | "username">
+        user: Pick<
+            User,
+            | "name"
+            | "email"
+            | "password"
+            | "username"
+            | "accountStatus"
+            | "profileImage"
+            | "googleId"
+            | "authProvider"
+        >
     ): Promise<User | null>;
     /**
      * Retrieves a user from the repository based on the provided filter.

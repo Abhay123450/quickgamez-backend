@@ -9,6 +9,13 @@ export interface UserAuthService {
         refreshToken: string;
         user: Partial<User>;
     }>;
+    signinWithGoogle(
+        user: Pick<User, "name" | "email" | "googleId" | "profileImage">
+    ): Promise<{
+        accessToken: string;
+        refreshToken: string;
+        user: Partial<User>;
+    }>;
     logout(userId: string, accessToken: string): Promise<boolean>;
     getAccessToken(refreshToken: string): Promise<string>;
     verifyEmailWithOtp(email: string, otp: number): Promise<boolean>;

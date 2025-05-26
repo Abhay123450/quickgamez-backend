@@ -12,7 +12,17 @@ export class UserRepositoryImpl implements UserRepository {
      * @return {Promise<User | null>} A promise that resolves to the newly added user, or null if the user was not added.
      */
     async addUser(
-        user: Pick<User, "name" | "email" | "password" | "username">
+        user: Pick<
+            User,
+            | "name"
+            | "email"
+            | "password"
+            | "username"
+            | "accountStatus"
+            | "googleId"
+            | "profileImage"
+            | "authProvider"
+        >
     ): Promise<User | null> {
         const newUser = await UserModel.create(user);
         const userAdded = await newUser.save();
@@ -256,6 +266,8 @@ export class UserRepositoryImpl implements UserRepository {
             user.deviceTokens = userDocument.deviceTokens;
         if (userDocument.emailOtp) user.emailOtp = userDocument.emailOtp;
         if (userDocument.avatar) user.avatar = userDocument.avatar;
+        if (userDocument.profileImage)
+            user.profileImage = userDocument.profileImage;
 
         return user;
     }

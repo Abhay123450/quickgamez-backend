@@ -7,9 +7,11 @@ import {
     ServerError
 } from "../../../utils/AppErrors.js";
 import { ConsoleLog } from "../../../utils/ConsoleLog.js";
+import { generateSecureRandomString } from "../../../utils/generateSecureRandomString.js";
 import { generateOtp } from "../../../utils/otpUtil.js";
 import { isPasswordMatched } from "../../../utils/passwordUtil.js";
 import { EmailService } from "../../email/EmailService.js";
+import { NotificationService } from "../../notifications/NotificationService.js";
 import { User } from "../User.js";
 import { UserRepository } from "../UserRepository.js";
 import { UserAuthService } from "./UserAuthService.js";
@@ -19,9 +21,15 @@ import jwt from "jsonwebtoken";
 export class UserAuthServiceImpl implements UserAuthService {
     private _userRepository: UserRepository;
     private _emailService: EmailService;
-    constructor(userRepository: UserRepository, emailService: EmailService) {
+    private _notificationService: NotificationService;
+    constructor(
+        userRepository: UserRepository,
+        emailService: EmailService,
+        notificationService: NotificationService
+    ) {
         this._userRepository = userRepository;
         this._emailService = emailService;
+        this._notificationService = notificationService;
     }
 
     async login(
@@ -87,9 +95,106 @@ export class UserAuthServiceImpl implements UserAuthService {
             throw new ServerError("Failed to save token.");
         }
 
-        delete user.password;
+        return {
+            accessToken,
+            refreshToken,
+            user: this._deleteSensitiveData(user)
+        };
+    }
 
-        return { accessToken, refreshToken, user };
+    async signinWithGoogle(
+        user: Pick<User, "name" | "email" | "googleId" | "profileImage">
+    ): Promise<{
+        accessToken: string;
+        refreshToken: string;
+        user: Partial<User>;
+    }> {
+        if (!user.googleId || !user.email || !user.name) {
+            throw new ClientError(
+                "Missing required fields.",
+                HttpStatusCode.BAD_REQUEST
+            );
+        }
+        let userExists = await this._userRepository.getUser({
+            googleId: user.googleId
+        });
+
+        if (!userExists) {
+            const emailExists =
+                await this._userRepository.getUserByEmailOrUsername(user.email);
+
+            if (emailExists && emailExists.authProvider === "email") {
+                throw new ClientError(
+                    "Please login with your email and password.",
+                    HttpStatusCode.BAD_REQUEST
+                );
+            }
+
+            const username =
+                user.name.split(" ")[0].slice(0, 8) +
+                generateSecureRandomString(12);
+
+            const newUser = await this._userRepository.addUser({
+                username,
+                name: user.name,
+                email: user.email,
+                googleId: user.googleId,
+                profileImage: user.profileImage,
+                authProvider: "google",
+                accountStatus: UserAccountStatus.ACTIVE
+            });
+
+            if (!newUser) {
+                throw new ServerError("Failed to add user.");
+            }
+
+            this._notificationService.createNewNotification({
+                type: "important",
+                userId: newUser.userId,
+                message: "Claim your unique username now!",
+                action: "open_profile",
+                payload: {}
+            });
+
+            userExists = newUser;
+        }
+
+        switch (userExists.accountStatus) {
+            case UserAccountStatus.UNVERIFIED:
+                throw new AuthenticationError(
+                    "Please verify your email.",
+                    ErrorCode.EMAIL_NOT_VERIFIED
+                );
+            case UserAccountStatus.BLOCKED:
+                throw new AuthenticationError(
+                    "Account blocked.",
+                    ErrorCode.ACCOUNT_BLOCKED
+                );
+        }
+
+        if (!userExists || !userExists.userId) {
+            throw new ServerError("Failed to get user.");
+        }
+
+        const accessToken = await this._generateAccessToken(userExists.userId);
+        const refreshToken = await this._generateRefreshToken(
+            userExists.userId
+        );
+
+        const isTokenSaved = await this._userRepository.saveRefreshToken(
+            userExists.userId,
+            refreshToken
+        );
+
+        if (!isTokenSaved) {
+            throw new ServerError("Failed to save token.");
+        }
+
+        return {
+            accessToken,
+            refreshToken,
+            user: this._deleteSensitiveData(userExists)
+        };
     }
 
     async logout(userId: string, refreshToken: string) {
@@ -204,5 +309,14 @@ export class UserAuthServiceImpl implements UserAuthService {
                     120 * 24 * 60 * 60 * 1000
             }
         );
+    }
+
+    private _deleteSensitiveData(user: Partial<User>): Partial<User> {
+        delete user.password;
+        delete user.refreshTokens;
+        delete user.emailOtp;
+        delete user.deviceTokens;
+        delete user.googleId;
+        return user;
     }
 }

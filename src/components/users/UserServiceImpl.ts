@@ -43,7 +43,17 @@ export class UserServiceImpl implements UserService {
             username = name.split(" ")[0].slice(0, 12);
             username += generateSecureRandomString(12);
         }
-        const user = {
+        const user: Pick<
+            User,
+            | "name"
+            | "email"
+            | "password"
+            | "username"
+            | "role"
+            | "accountStatus"
+            | "emailOtp"
+            | "authProvider"
+        > = {
             name: name,
             email: email,
             password: password,
@@ -53,7 +63,8 @@ export class UserServiceImpl implements UserService {
             emailOtp: {
                 otp: generateOtp(6),
                 expiresAt: new Date(Date.now() + 15 * 60 * 1000) // 15 minutes
-            }
+            },
+            authProvider: "email"
         };
         const userAdded = await this._userRepository.addUser(user);
         if (!userAdded) {
