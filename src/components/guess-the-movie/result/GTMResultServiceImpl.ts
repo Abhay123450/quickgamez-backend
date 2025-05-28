@@ -25,6 +25,7 @@ export class GTMResultServiceImpl implements GTMResultService {
             result.difficulty,
             result.isTimerOn,
             result.timeLeft,
+            result.timeGiven,
             result.livesUsed,
             result.result,
             result.movieNameUnguessed,
@@ -44,6 +45,7 @@ export class GTMResultServiceImpl implements GTMResultService {
                     result.difficulty,
                     result.isTimerOn,
                     result.timeLeft,
+                    result.timeGiven,
                     result.livesUsed,
                     result.result,
                     result.movieNameUnguessed,
@@ -58,6 +60,7 @@ export class GTMResultServiceImpl implements GTMResultService {
         difficulty: Difficulty,
         isTimerOn: boolean,
         timeLeft: number,
+        timeGiven: number,
         livesUsed: number,
         result: "win" | "lose",
         movieNameUnguessed: string,
@@ -79,8 +82,9 @@ export class GTMResultServiceImpl implements GTMResultService {
         }
 
         if (isTimerOn) {
-            // +1 point for each second remaining
-            score += timeLeft;
+            // time bonus = percentage of time left
+            const timeBonus = Math.ceil((timeLeft / timeGiven) * 100);
+            score += timeBonus;
         }
 
         // combined score for all correct guesses should be 100
