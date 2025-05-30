@@ -28,6 +28,8 @@ app.use(
     cors({
         credentials: true,
         origin: [
+            "https://quickgamez.com",
+            "https://www.quickgamez.com",
             "http://192.168.1.6:5173",
             "http://localhost:5173",
             "http://192.168.1.7:5173",

@@ -9,7 +9,7 @@ export let connectToDB = async () => {
             "Cannot connect to database. Invalid credentials."
         );
     }
-    const MONGO_URL = `mongodb+srv://${MONGO_USERNAME}:${MONGO_PASSWORD}@cluster0.ge3w1pn.mongodb.net/test?retryWrites=true&w=majority&appName=Cluster0`;
+    const MONGO_URL = `mongodb+srv://${MONGO_USERNAME}:${MONGO_PASSWORD}@cluster0.ge3w1pn.mongodb.net/main?retryWrites=true&w=majority&appName=Cluster0`;
 
     await mongoose
         .connect(MONGO_URL)
