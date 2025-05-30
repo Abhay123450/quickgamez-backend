@@ -268,6 +268,8 @@ export class UserRepositoryImpl implements UserRepository {
         if (userDocument.avatar) user.avatar = userDocument.avatar;
         if (userDocument.profileImage)
             user.profileImage = userDocument.profileImage;
+        if (userDocument.authProvider)
+            user.authProvider = userDocument.authProvider;
 
         return user;
     }
