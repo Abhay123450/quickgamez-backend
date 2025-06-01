@@ -3,3 +3,6 @@ node_modules/
 dist/
 help.txt
 src/public/*
+
+*.json
+saveMoviesToDB.ts
