@@ -198,7 +198,6 @@ export class UserAuthServiceImpl implements UserAuthService {
     }
 
     async logout(userId: string, refreshToken: string) {
-        ConsoleLog.info(`userId: ${userId}, refreshToken: ${refreshToken}`);
         const isTokenDeleted = await this._userRepository.deleteRefreshToken(
             userId,
             refreshToken
@@ -229,7 +228,6 @@ export class UserAuthServiceImpl implements UserAuthService {
                 "email",
                 "emailOtp"
             ]);
-        ConsoleLog.info(`user: ${JSON.stringify(user)}`);
         if (!user || !user.userId || !user.emailOtp) {
             throw new ClientError(
                 `Email: ${email} not found.`,
@@ -258,7 +256,6 @@ export class UserAuthServiceImpl implements UserAuthService {
 
     async saveAndSendEmailOtp(email: string): Promise<boolean> {
         const otp = generateOtp(6);
-        ConsoleLog.info(`Otp: ${otp}`);
         const otpSaved = await this._userRepository.saveOtp(email, otp);
         if (!otpSaved) {
             throw new ServerError(`Failed to save otp for email: ${email}`);

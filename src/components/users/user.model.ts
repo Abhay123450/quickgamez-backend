@@ -101,9 +101,6 @@ userSchema.methods.isPasswordCorrect = async function (password: string) {
 };
 
 userSchema.methods.generateAccessToken = function (): string {
-    console.log(process.env.ACCESS_TOKEN_VALIDITY);
-    console.log(process.env.ACCESS_TOKEN_SECRET);
-
     return jwt.sign(
         { _id: this._id },
         process.env.ACCESS_TOKEN_SECRET as string,
@@ -114,7 +111,6 @@ userSchema.methods.generateAccessToken = function (): string {
 };
 
 userSchema.methods.generateRefreshToken = function (): string {
-    console.log(process.env.ACCESS_TOKEN_VALIDITY);
     return jwt.sign(
         { _id: this._id },
         process.env.REFRESH_TOKEN_SECRET as string,

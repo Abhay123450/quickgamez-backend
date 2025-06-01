@@ -32,14 +32,10 @@ export async function authenticateUser(
     try {
         let accessToken: string | undefined;
 
-        ConsoleLog.info(`req.cookies ${JSON.stringify(req.cookies)}`);
-
         if (req.cookies?.accessToken) {
             accessToken = req.cookies.accessToken;
-            ConsoleLog.info(`accessToken ${accessToken}`);
         } else {
             accessToken = req.headers["authorization"]?.replace("Bearer ", "");
-            console.log(`authorizationHeader ${JSON.stringify(accessToken)}`);
         }
 
         if (!accessToken) {
@@ -51,11 +47,8 @@ export async function authenticateUser(
             process.env.ACCESS_TOKEN_SECRET as string
         ) as { userId: string };
 
-        console.log(`payload ${JSON.stringify(userId)}`);
-
         const fieldsToSelect: (keyof User)[] = ["accountStatus", "role"];
         const user = await userRepository.getUserById(userId, fieldsToSelect);
-        console.log(`user ${JSON.stringify(user)}`);
 
         if (!user || !user.userId || !user.accountStatus || !user.role) {
             throw new AuthenticationError("Login required.");
@@ -85,7 +78,6 @@ export async function authenticateUser(
             );
         }
 
-        ConsoleLog.success(`user authenticated`);
         req.user = user as User;
         next();
     } catch (error) {
@@ -113,14 +105,10 @@ export async function isUserAuthenticated(
     try {
         let accessToken: string | undefined;
 
-        ConsoleLog.info(`req.cookies ${JSON.stringify(req.cookies)}`);
-
         if (req.cookies?.accessToken) {
             accessToken = req.cookies.accessToken;
-            ConsoleLog.info(`accessToken ${accessToken}`);
         } else {
             accessToken = req.headers["authorization"]?.replace("Bearer ", "");
-            console.log(`authorizationHeader ${JSON.stringify(accessToken)}`);
         }
 
         if (!accessToken) {
@@ -132,11 +120,8 @@ export async function isUserAuthenticated(
             process.env.ACCESS_TOKEN_SECRET as string
         ) as { userId: string };
 
-        console.log(`payload ${JSON.stringify(userId)}`);
-
         const fieldsToSelect: (keyof User)[] = ["accountStatus", "role"];
         const user = await userRepository.getUserById(userId, fieldsToSelect);
-        console.log(`user ${JSON.stringify(user)}`);
 
         if (!user || !user.userId || !user.accountStatus || !user.role) {
             return next();
@@ -157,11 +142,9 @@ export async function isUserAuthenticated(
             return next();
         }
 
-        ConsoleLog.success(`user authenticated`);
         req.user = user as User;
         next();
     } catch (error) {
-        ConsoleLog.error(`Error ${JSON.stringify(error)}`);
         next();
     }
 }
@@ -178,9 +161,7 @@ export function decodeAccessToken(
             accessToken = req.cookies.accessToken;
         } else {
             accessToken = req.headers["authorization"]?.replace("Bearer ", "");
-            console.log(`authorizationHeader ${JSON.stringify(accessToken)}`);
         }
-        ConsoleLog.info(`accessToken ${accessToken}`);
 
         if (!accessToken) {
             throw new AuthenticationError(
@@ -215,9 +196,7 @@ export function decodeRefreshToken(
             refreshToken = Array.isArray(req.headers["refreshtoken"])
                 ? req.headers["refreshtoken"][0]
                 : req.headers["refreshtoken"];
-            console.log(`refreshtoken header ${JSON.stringify(refreshToken)}`);
         }
-        ConsoleLog.info(`refreshToken ${refreshToken}`);
 
         if (!refreshToken) {
             throw new AuthenticationError(

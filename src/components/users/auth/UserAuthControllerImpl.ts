@@ -83,8 +83,6 @@ export class UserAuthControllerImpl implements UserAuthController {
         );
         req.accessToken = accessToken;
 
-        ConsoleLog.info(`accessToken: ${accessToken}`);
-        ConsoleLog.info(`refreshToken: ${refreshToken}`);
         ConsoleLog.info(`req.userId: ${req.userId}`);
         if (refreshToken && req.userId) {
             // remove from db
@@ -114,7 +112,6 @@ export class UserAuthControllerImpl implements UserAuthController {
             throw new AuthenticationError("Login required.");
         }
         const accessToken = await this._userAuthService.getAccessToken(userId);
-        ConsoleLog.info(`newly generated accessToken: ${accessToken}`);
         const accessTokenValidity: number =
             parseInt(process.env.ACCESS_TOKEN_VALIDITY as string) ||
             60 * 60 * 1000;
@@ -193,10 +190,6 @@ export class UserAuthControllerImpl implements UserAuthController {
             throw new ClientError("Invalid credentials");
         }
 
-        ConsoleLog.info(
-            `email: ${email}, otp: ${otp}, newPassword: ${newPassword}`
-        );
-
         const isPasswordReset = await this._userAuthService.resetPassword(
             email,
             otp,
@@ -214,14 +207,7 @@ export class UserAuthControllerImpl implements UserAuthController {
 
     async signinWithGoogle(req: Request, res: Response, next: NextFunction) {
         const { idToken } = req.body;
-        console.log("------------------------------------------------");
-        ConsoleLog.info(`google login body: ${JSON.stringify(idToken)}`);
         const credentials = this._decodeJWT(idToken);
-        // const token = credentials;
-        ConsoleLog.info(`req.headers: ${JSON.stringify(req.headers)}`);
-        console.log(`decodedn data: ${JSON.stringify(credentials)}`);
-
-        console.log("------------------------------------------------");
 
         const ticket = await this._googleClient.verifyIdToken({
             idToken: idToken,
@@ -241,8 +227,6 @@ export class UserAuthControllerImpl implements UserAuthController {
         const name = payload["name"];
         const email = payload["email"];
         const picture = payload["picture"];
-
-        ConsoleLog.info(`name: ${name}, email: ${email}, picture: ${picture}`);
 
         if (!name || !email || !userGoogleId) {
             throw new ClientError("Error in getting user details");

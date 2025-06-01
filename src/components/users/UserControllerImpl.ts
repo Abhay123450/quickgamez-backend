@@ -20,7 +20,6 @@ export class UserControllerImpl implements UserController {
     }
 
     async addUser(req: Request, res: Response, next: NextFunction) {
-        console.log(`req.body is ${JSON.stringify(req.body)}`);
         const errors = validationResult(req);
         const errorMessages: string[] = errors
             .array()
@@ -31,7 +30,7 @@ export class UserControllerImpl implements UserController {
         }
         const { name, email, password, username } = matchedData(req);
         ConsoleLog.info(
-            `name is ${name} email is ${email} password is ${password} username is ${username}`
+            `name is ${name} email is ${email} username is ${username}`
         );
         const userSaved = await this.userService.addUser(
             name,

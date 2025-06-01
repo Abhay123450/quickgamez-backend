@@ -125,6 +125,9 @@ export class UserServiceImpl implements UserService {
         }
         delete userDetails["password"];
         delete userDetails["refreshTokens"];
+        delete userDetails["emailOtp"];
+        delete userDetails["deviceTokens"];
+        delete userDetails["googleId"];
 
         ConsoleLog.info(`User details: ${JSON.stringify(userDetails)}`);
 
