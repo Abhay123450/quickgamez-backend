@@ -249,7 +249,7 @@ export class UserRepositoryImpl implements UserRepository {
     ): User | Partial<User> {
         let user: Partial<User> = {};
 
-        if (userDocument._id) user.userId = userDocument._id;
+        if (userDocument._id) user.userId = userDocument._id.toString();
         if (userDocument.username) user.username = userDocument.username;
         if (userDocument.name) user.name = userDocument.name;
         if (userDocument.email) user.email = userDocument.email;
