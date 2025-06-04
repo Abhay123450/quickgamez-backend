@@ -11,3 +11,11 @@ export interface Rebus {
     updatedAt: Date;
     addedBy: User["userId"] | Partial<User>;
 }
+
+export interface NewRebus
+    extends Omit<
+        Rebus,
+        "rebusId" | "rebusImageUrl" | "createdAt" | "updatedAt"
+    > {
+    rebusImage: any;
+}
