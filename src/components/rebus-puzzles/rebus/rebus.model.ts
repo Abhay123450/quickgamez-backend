@@ -42,4 +42,6 @@ export const rebusSchema = new Schema<RebusDocument>(
     }
 );
 
+rebusSchema.index({ rebusImageUrl: 1, answer: 1 }, { unique: true });
+
 export const RebusModel = model<RebusDocument>("Rebus", rebusSchema, "rebus");
