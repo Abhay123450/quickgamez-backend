@@ -1,0 +1,41 @@
+import { body } from "express-validator";
+import { Difficulty } from "../../../constants/Difficulty.js";
+import { set } from "mongoose";
+
+export const validateAddRebusReq = () => [
+    body("rebusImage").custom(async (value, { req }) => {
+        if (!req.file) {
+            throw new Error("rebusImage is required");
+        }
+        const allowedFileTypes = [
+            "image/jpeg",
+            "image/png",
+            "image/jpg",
+            "image/svg+xml"
+        ];
+        if (!allowedFileTypes.includes(req.file.mimetype)) {
+            throw new Error(
+                "Invalid file type. Only JPEG, PNG, JPG and SVG files are allowed."
+            );
+        }
+        return true;
+    }),
+    body("answer").isString().withMessage("answer is required"),
+    body("difficulty")
+        .exists()
+        .withMessage("difficulty is required")
+        .isString()
+        .withMessage("difficulty must be a string.")
+        .trim()
+        .escape()
+        .custom((difficulty: string) => difficulty in Difficulty)
+        .withMessage("difficulty must be 'easy', 'medium' or 'hard'."),
+    body("explanation")
+        .exists()
+        .withMessage("explanation is required")
+        .isString()
+        .trim()
+        .escape()
+        .isLength({ min: 1 })
+        .withMessage("explanation cannot be empty.")
+];

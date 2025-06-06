@@ -19,6 +19,7 @@ import { gtmResultRouter } from "./components/guess-the-movie/result/gtmResult.r
 import { leaderboardRouter } from "./components/guess-the-movie/leaderboard/leaderboard.route.js";
 import { notificationRouter } from "./components/notifications/notification.route.js";
 import { contactUsRouter } from "./components/contact-us/contactUs.route.js";
+import { rebusRouter } from "./components/rebus-puzzles/rebus/rebus.route.js";
 
 const port: number = Number(process.env.PORT) || 4000;
 
@@ -68,6 +69,7 @@ app.use("/api/v1", gtmResultRouter);
 app.use("/api/v1", leaderboardRouter);
 app.use("/api/v1", notificationRouter);
 app.use("/api/v1", contactUsRouter);
+app.use("/api/v1", rebusRouter);
 
 app.get("/api/v1/health-check", (req: Request, res: Response) => {
     sendResponseSuccess(res, "Server is up and running");

@@ -1,14 +1,28 @@
 import { Router } from "express";
 import { catchAsycError } from "../../../middlewares/catchAsyncError.js";
 import { RebusControllerImpl } from "./RebusControllerImpl.js";
+import { handleFile } from "./handleFile.js";
+import { validateAddRebusReq } from "./rebus.validate.js";
+import { RebusServiceImpl } from "./RebusServiceImpl.js";
+import { FileUploadSerivceImpl } from "../../file-upload/FileUploadServiceImpl.js";
+import { authenticateUser } from "../../../middlewares/userAuth.middleware.js";
+import { RebusRepositoryImpl } from "./RebusRepositoryImpl.js";
 const router = Router();
 
-const rebusController = new RebusControllerImpl();
+const fileUpdateService = new FileUploadSerivceImpl();
+const rebusRepository = new RebusRepositoryImpl();
+const rebusService = new RebusServiceImpl(fileUpdateService, rebusRepository);
+const rebusController = new RebusControllerImpl(rebusService);
 
 router
     .route("/rebus")
     .get(catchAsycError(rebusController.getRebus.bind(rebusController)))
-    .post(catchAsycError(rebusController.addRebus.bind(rebusController)));
+    .post(
+        authenticateUser,
+        handleFile("rebusImage"),
+        validateAddRebusReq(),
+        catchAsycError(rebusController.addRebus.bind(rebusController))
+    );
 router
     .route("/rebus/unplayed")
     .get(
