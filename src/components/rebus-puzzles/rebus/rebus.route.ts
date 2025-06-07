@@ -2,7 +2,10 @@ import { Router } from "express";
 import { catchAsycError } from "../../../middlewares/catchAsyncError.js";
 import { RebusControllerImpl } from "./RebusControllerImpl.js";
 import { handleFile } from "./handleFile.js";
-import { validateAddRebusReq } from "./rebus.validate.js";
+import {
+    validateAddRebusReq,
+    validateGetRandomRebusReq
+} from "./rebus.validate.js";
 import { RebusServiceImpl } from "./RebusServiceImpl.js";
 import { FileUploadSerivceImpl } from "../../file-upload/FileUploadServiceImpl.js";
 import { authenticateUser } from "../../../middlewares/userAuth.middleware.js";
@@ -30,7 +33,10 @@ router
     );
 router
     .route("/rebus/random")
-    .get(catchAsycError(rebusController.getRandomRebus.bind(rebusController)));
+    .get(
+        validateGetRandomRebusReq(),
+        catchAsycError(rebusController.getRandomRebus.bind(rebusController))
+    );
 router
     .route("/rebus/:id")
     .get(rebusController.getRebusById.bind(rebusController))

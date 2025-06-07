@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { RebusController } from "./RebusController.js";
 import { ConsoleLog } from "../../../utils/ConsoleLog.js";
-import { validationResult } from "express-validator";
+import { matchedData, validationResult } from "express-validator";
 import { ServerError, ValidationError } from "../../../utils/AppErrors.js";
 import { RebusService } from "./RebusService.js";
 import { sendResponseSuccess } from "../../../utils/sendResponse.js";
@@ -59,7 +59,20 @@ export class RebusControllerImpl implements RebusController {
         res: Response,
         next: NextFunction
     ): Promise<void> {
-        throw new Error("Method not implemented.");
+        const errors = validationResult(req);
+        const errorMessages = errors.array().map((error) => error.msg);
+        if (!errors.isEmpty()) {
+            throw new ValidationError(errorMessages);
+        }
+        const { difficulty, count } = matchedData(req);
+        const rebus = await this._rebusService.getRandomRebus(
+            difficulty,
+            count
+        );
+        if (!rebus) {
+            throw new ServerError("Failed to get rebus");
+        }
+        return sendResponseSuccess(res, rebus);
     }
     async getUnplayedRebus(
         req: Request,

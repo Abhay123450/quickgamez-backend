@@ -46,7 +46,7 @@ export class RebusServiceImpl implements RebusService {
         difficulty: Rebus["difficulty"],
         count: number
     ): Promise<Rebus[]> {
-        throw new Error("Method not implemented.");
+        return this._rebusRepository.getRandomRebus(count, difficulty);
     }
     async getUnplayedRebus(
         userId: User["userId"],

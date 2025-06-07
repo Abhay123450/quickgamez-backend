@@ -1,4 +1,4 @@
-import { body } from "express-validator";
+import { body, query } from "express-validator";
 import { Difficulty } from "../../../constants/Difficulty.js";
 import { set } from "mongoose";
 
@@ -38,4 +38,21 @@ export const validateAddRebusReq = () => [
         .escape()
         .isLength({ min: 1 })
         .withMessage("explanation cannot be empty.")
+];
+
+export const validateGetRandomRebusReq = () => [
+    query("difficulty")
+        .isString()
+        .trim()
+        .escape()
+        .isLength({ min: 1 })
+        .withMessage("difficulty is required.")
+        .custom((difficulty: string) => difficulty in Difficulty)
+        .withMessage("difficulty must be 'easy', 'medium' or 'hard'."),
+    query("count")
+        .isNumeric()
+        .withMessage("count is required.")
+        .custom((count) => count > 0)
+        .withMessage("count must be a number greater than 0.")
+        .customSanitizer((value) => parseInt(value, 10))
 ];
