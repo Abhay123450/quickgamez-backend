@@ -48,19 +48,23 @@ export class UserAuthControllerImpl implements UserAuthController {
         // try {
         res.cookie("refreshToken", refreshToken, {
             httpOnly: true,
-            maxAge: refreshTokenValidity
+            maxAge: refreshTokenValidity,
+            secure: true
         })
             .cookie("refreshTokenValidTill", refreshTokenValidTill, {
                 httpOnly: false,
-                maxAge: refreshTokenValidity
+                maxAge: refreshTokenValidity,
+                secure: true
             })
             .cookie("accessToken", accessToken, {
                 httpOnly: true,
-                maxAge: accessTokenValidity
+                maxAge: accessTokenValidity,
+                secure: true
             })
             .cookie("accessTokenValidTill", accessTokenValidTill, {
                 httpOnly: false,
-                maxAge: accessTokenValidity
+                maxAge: accessTokenValidity,
+                secure: true
             })
             .status(HttpStatusCode.OK)
             .json({
@@ -253,19 +257,23 @@ export class UserAuthControllerImpl implements UserAuthController {
 
         res.cookie("refreshToken", refreshToken, {
             httpOnly: true,
-            maxAge: refreshTokenValidity
+            maxAge: refreshTokenValidity,
+            secure: true
         })
             .cookie("refreshTokenValidTill", refreshTokenValidTill, {
                 httpOnly: false,
-                maxAge: refreshTokenValidity
+                maxAge: refreshTokenValidity,
+                secure: true
             })
             .cookie("accessToken", accessToken, {
                 httpOnly: true,
-                maxAge: accessTokenValidity
+                maxAge: accessTokenValidity,
+                secure: true
             })
             .cookie("accessTokenValidTill", accessTokenValidTill, {
                 httpOnly: false,
-                maxAge: accessTokenValidity
+                maxAge: accessTokenValidity,
+                secure: true
             })
             .status(HttpStatusCode.OK)
             .json({
