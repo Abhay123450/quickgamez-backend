@@ -10,12 +10,15 @@ import { RebusServiceImpl } from "./RebusServiceImpl.js";
 import { FileUploadSerivceImpl } from "../../file-upload/FileUploadServiceImpl.js";
 import { authenticateUser } from "../../../middlewares/userAuth.middleware.js";
 import { RebusRepositoryImpl } from "./RebusRepositoryImpl.js";
+import { rebusResultRouter } from "../result/rebusResult.route.js";
 const router = Router();
 
 const fileUpdateService = new FileUploadSerivceImpl();
 const rebusRepository = new RebusRepositoryImpl();
 const rebusService = new RebusServiceImpl(fileUpdateService, rebusRepository);
 const rebusController = new RebusControllerImpl(rebusService);
+
+router.use(rebusResultRouter);
 
 router
     .route("/rebus")

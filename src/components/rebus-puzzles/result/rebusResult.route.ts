@@ -15,7 +15,7 @@ const rebusResultService = new RebusResultServiceImpl(rebusResultRepository);
 const rebusResultController = new RebusResultControllerImpl(rebusResultService);
 
 router
-    .route("games/rebus-puzzles/results")
+    .route("/games/rebus-puzzles/results")
     .post(
         authenticateUser,
         validateAddRebusResult(),
@@ -25,7 +25,7 @@ router
     );
 
 router
-    .route("games/rebus-puzzles/results/multiple")
+    .route("/games/rebus-puzzles/results/multiple")
     .post(
         authenticateUser,
         validateAddMultipleRebusResults(),
