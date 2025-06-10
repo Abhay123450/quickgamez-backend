@@ -69,28 +69,27 @@ export class RebusResultControllerImpl implements RebusResultController {
     }
 
     private _isRebusResult(
-        gtmresult: any
-    ): gtmresult is Omit<NewRebusPuzzleResult, "score"> {
+        rebusResult: any
+    ): rebusResult is Omit<NewRebusPuzzleResult, "score"> {
         return (
-            "movieId" in gtmresult &&
-            "userId" in gtmresult &&
-            "difficulty" in gtmresult &&
-            "industry" in gtmresult &&
-            "movieNameUnguessed" in gtmresult &&
-            "startedAt" in gtmresult &&
-            "endedAt" in gtmresult &&
-            "livesUsed" in gtmresult &&
-            "isTimerOn" in gtmresult &&
-            "timeGiven" in gtmresult &&
-            "timeLeft" in gtmresult &&
-            "result" in gtmresult &&
-            "guesses" in gtmresult
+            "rebusId" in rebusResult &&
+            "userId" in rebusResult &&
+            "difficulty" in rebusResult &&
+            "rebusAnswerUnguessed" in rebusResult &&
+            "startedAt" in rebusResult &&
+            "endedAt" in rebusResult &&
+            "livesUsed" in rebusResult &&
+            "isTimerOn" in rebusResult &&
+            "timeGiven" in rebusResult &&
+            "timeLeft" in rebusResult &&
+            "result" in rebusResult &&
+            "guesses" in rebusResult
         );
     }
 
     private _isRebusResultArray(
-        gtmresults: any[]
-    ): gtmresults is Omit<NewRebusPuzzleResult, "score">[] {
-        return gtmresults.every(this._isRebusResult);
+        rebusResult: any[]
+    ): rebusResult is Omit<NewRebusPuzzleResult, "score">[] {
+        return rebusResult.every(this._isRebusResult);
     }
 }
