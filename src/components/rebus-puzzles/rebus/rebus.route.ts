@@ -11,6 +11,7 @@ import { FileUploadSerivceImpl } from "../../file-upload/FileUploadServiceImpl.j
 import { authenticateUser } from "../../../middlewares/userAuth.middleware.js";
 import { RebusRepositoryImpl } from "./RebusRepositoryImpl.js";
 import { rebusResultRouter } from "../result/rebusResult.route.js";
+import { leaderboardRouter } from "../leaderboard/leaderboard.route.js";
 const router = Router();
 
 const fileUpdateService = new FileUploadSerivceImpl();
@@ -19,6 +20,7 @@ const rebusService = new RebusServiceImpl(fileUpdateService, rebusRepository);
 const rebusController = new RebusControllerImpl(rebusService);
 
 router.use(rebusResultRouter);
+router.use(leaderboardRouter);
 
 router
     .route("/rebus")
