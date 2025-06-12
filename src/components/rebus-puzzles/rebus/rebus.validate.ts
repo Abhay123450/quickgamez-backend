@@ -1,4 +1,4 @@
-import { body, query } from "express-validator";
+import { body, param, query } from "express-validator";
 import { Difficulty } from "../../../constants/Difficulty.js";
 import { set } from "mongoose";
 
@@ -55,4 +55,12 @@ export const validateGetRandomRebusReq = () => [
         .custom((count) => count > 0)
         .withMessage("count must be a number greater than 0.")
         .customSanitizer((value) => parseInt(value, 10))
+];
+
+export const validateGetRebusByIdReq = () => [
+    param("id")
+        .exists()
+        .withMessage("rebusId is required.")
+        .isLength({ min: 24, max: 24 })
+        .withMessage("Invalid rebusId.")
 ];

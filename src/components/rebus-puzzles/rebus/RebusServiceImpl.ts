@@ -33,7 +33,7 @@ export class RebusServiceImpl implements RebusService {
         throw new Error("Method not implemented.");
     }
     async getRebusById(rebusId: string): Promise<Rebus> {
-        throw new Error("Method not implemented.");
+        return this._rebusRepository.getRebusById(rebusId);
     }
     async getRebus(
         filter: Partial<Rebus>,
