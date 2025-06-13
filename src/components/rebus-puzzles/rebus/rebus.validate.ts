@@ -57,7 +57,7 @@ export const validateGetRandomRebusReq = () => [
         .customSanitizer((value) => parseInt(value, 10))
 ];
 
-export const validateGetRebusByIdReq = () => [
+export const validateRebusIdParam = () => [
     param("id")
         .exists()
         .withMessage("rebusId is required.")

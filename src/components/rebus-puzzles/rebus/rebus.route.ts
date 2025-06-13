@@ -5,7 +5,7 @@ import { handleFile } from "./handleFile.js";
 import {
     validateAddRebusReq,
     validateGetRandomRebusReq,
-    validateGetRebusByIdReq
+    validateRebusIdParam
 } from "./rebus.validate.js";
 import { RebusServiceImpl } from "./RebusServiceImpl.js";
 import { FileUploadSerivceImpl } from "../../file-upload/FileUploadServiceImpl.js";
@@ -46,10 +46,13 @@ router
 router
     .route("/rebus/:id")
     .get(
-        validateGetRebusByIdReq(),
+        validateRebusIdParam(),
         catchAsycError(rebusController.getRebusById.bind(rebusController))
     )
     .patch(catchAsycError(rebusController.updateRebus.bind(rebusController)))
-    .delete(catchAsycError(rebusController.deleteRebus.bind(rebusController)));
+    .delete(
+        validateRebusIdParam(),
+        catchAsycError(rebusController.deleteRebus.bind(rebusController))
+    );
 
 export const rebusRouter = router;

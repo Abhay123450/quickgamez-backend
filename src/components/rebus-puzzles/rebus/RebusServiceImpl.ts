@@ -20,7 +20,8 @@ export class RebusServiceImpl implements RebusService {
             "rebus-puzzles",
             rebus.rebusImage.buffer,
             "rebus-puzzle-" +
-                new Date().toUTCString() +
+                new Date().getTime() +
+                "-" +
                 generateSecureRandomString(5),
             rebus.rebusImage.mimetype
         );
@@ -54,5 +55,12 @@ export class RebusServiceImpl implements RebusService {
         count: number
     ): Promise<Rebus[]> {
         throw new Error("Method not implemented.");
+    }
+    async deleteRebus(rebusId: string): Promise<boolean> {
+        const deletedRebus = await this._rebusRepository.deleteRebus(rebusId);
+        console.log("deletedRebus is", deletedRebus);
+        const imageUrl = deletedRebus.rebusImageUrl.split("/").pop() ?? "";
+        await this._fileUploadSevice.deleteFile(imageUrl, "rebus-puzzles");
+        return true;
     }
 }

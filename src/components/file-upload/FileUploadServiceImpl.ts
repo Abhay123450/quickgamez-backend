@@ -31,7 +31,15 @@ export class FileUploadSerivceImpl implements FileUploadSerivce {
         fileName: string,
         collectionName: string
     ): Promise<boolean> {
-        throw new Error("Method not implemented.");
+        try {
+            const bucket: Bucket = this._storage.bucket(collectionName);
+            const fileDeleted = await bucket.file(fileName).delete();
+            ConsoleLog.info(`file deleted: ${JSON.stringify(fileDeleted)}`);
+            return true;
+        } catch (error) {
+            ConsoleLog.error(error);
+            return false;
+        }
     }
     private async _createBucket(bucketName: string) {
         try {

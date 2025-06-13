@@ -1,3 +1,4 @@
+import { ClientError } from "../../../utils/AppErrors.js";
 import { User } from "../../users/User.js";
 import { Rebus } from "./Rebus.js";
 import { RebusModel } from "./rebus.model.js";
@@ -27,7 +28,7 @@ export class RebusRepositoryImpl implements RebusRepository {
     async getRebusById(rebusId: string): Promise<Rebus> {
         const rebusDocument = await RebusModel.findById(rebusId);
         if (!rebusDocument) {
-            throw new Error("Rebus not found.");
+            throw new ClientError("Rebus not found", 404);
         }
         return this._convertRebusDocumentToRebus(rebusDocument);
     }
@@ -55,6 +56,12 @@ export class RebusRepositoryImpl implements RebusRepository {
         difficulty?: Rebus["difficulty"]
     ): Promise<Rebus[]> {
         throw new Error("Method not implemented. ");
+    }
+
+    async deleteRebus(rebusId: string): Promise<Rebus> {
+        const rebusDocument = await RebusModel.findByIdAndDelete(rebusId);
+        console.log("rebusDocument is", rebusDocument);
+        return this._convertRebusDocumentToRebus(rebusDocument);
     }
 
     private _convertRebusDocumentToRebus(rebusDocument: any): Rebus {

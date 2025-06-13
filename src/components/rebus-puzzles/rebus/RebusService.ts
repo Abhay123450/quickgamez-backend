@@ -20,4 +20,5 @@ export interface RebusService {
         difficulty: Rebus["difficulty"],
         count: number
     ): Promise<Rebus[]>;
+    deleteRebus(rebusId: string): Promise<boolean>;
 }

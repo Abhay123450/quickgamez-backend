@@ -108,6 +108,16 @@ export class RebusControllerImpl implements RebusController {
         res: Response,
         next: NextFunction
     ): Promise<void> {
-        throw new Error("Method not implemented.");
+        const errors = validationResult(req);
+        const errorMessages = errors.array().map((error) => error.msg);
+        if (!errors.isEmpty()) {
+            throw new ValidationError(errorMessages);
+        }
+        const rebusId = matchedData(req).id as string;
+        const rebus = await this._rebusService.deleteRebus(rebusId);
+        if (!rebus) {
+            throw new ServerError("Failed to delete rebus");
+        }
+        return sendResponseSuccess(res, "Rebus deleted successfully");
     }
 }
