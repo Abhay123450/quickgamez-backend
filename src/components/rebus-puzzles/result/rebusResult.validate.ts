@@ -109,8 +109,12 @@ export const validateAddRebusResult = () => [
 ];
 
 export const validateAddMultipleRebusResults = () => [
-    body().isArray().withMessage("body must be an array."),
-    body("*.rebusId")
+    body("results")
+        .exists()
+        .withMessage("results is required.")
+        .isArray()
+        .withMessage("results must be an array."),
+    body("results.*.rebusId")
         .exists()
         .withMessage("'rebusId' is required.")
         .isString()
@@ -118,7 +122,7 @@ export const validateAddMultipleRebusResults = () => [
         .escape()
         .isLength({ min: 24, max: 24 })
         .withMessage("Invalid 'rebusId'"),
-    body("*.difficulty")
+    body("results.*.difficulty")
         .exists()
         .isString()
         .withMessage("'difficulty' is required.")
@@ -126,7 +130,7 @@ export const validateAddMultipleRebusResults = () => [
         .escape()
         .custom((difficulty: string) => difficulty in Difficulty)
         .withMessage("difficulty must be 'easy', 'medium' or 'hard'."),
-    body("*.rebusAnswerUnguessed")
+    body("results.*.rebusAnswerUnguessed")
         .exists()
 
         .withMessage("'rebusAnswerUnguessed' is required.")
@@ -135,7 +139,7 @@ export const validateAddMultipleRebusResults = () => [
         .escape()
         .isLength({ min: 1 })
         .withMessage("'rebusAnswerUnguessed' is required."),
-    body("*.startedAt")
+    body("results.*.startedAt")
         .exists()
         .withMessage("startedAt is required.")
         .isNumeric()
@@ -143,7 +147,7 @@ export const validateAddMultipleRebusResults = () => [
         // and not in the future
         .custom((startedAt) => startedAt < Date.now())
         .withMessage("startedAt must be a valid date."),
-    body("*.endedAt")
+    body("results.*.endedAt")
         .exists()
         .withMessage("endedAt is required.")
         .isNumeric()
@@ -151,30 +155,30 @@ export const validateAddMultipleRebusResults = () => [
         // and not in the future
         .custom((endedAt) => endedAt < Date.now())
         .withMessage("endedAt must be a valid date."),
-    body("*.livesUsed")
+    body("results.*.livesUsed")
         .exists()
         .withMessage("livesUsed is required.")
         .isNumeric()
         .custom((livesUsed) => !(livesUsed < 0 || livesUsed > 5))
         .withMessage("livesUsed must be a number greater -1 and less than 6."),
-    body("*.isTimerOn")
+    body("results.*.isTimerOn")
         .exists()
         .isBoolean()
         .withMessage("'isTimerOn' is required and must be a boolean")
         .customSanitizer((istiemrOn) => Boolean(istiemrOn)),
-    body("*.timeGiven")
+    body("results.*.timeGiven")
         .exists()
         .withMessage("timeGiven is required (in seconds).")
         .isNumeric()
         .custom((timeGiven) => timeGiven > 0)
         .withMessage("timeGiven must be a number greater than 0."),
-    body("*.timeLeft")
+    body("results.*.timeLeft")
         .exists()
         .withMessage("timeLeft is required.")
         .isNumeric()
         .custom((timeLeft) => timeLeft >= 0)
         .withMessage("timeLeft must be a number greater than or equal to 0."),
-    body("*.result")
+    body("results.*.result")
         .exists()
         .isString()
         .withMessage("'result' is required.")
@@ -182,13 +186,13 @@ export const validateAddMultipleRebusResults = () => [
         .escape()
         .custom((result) => ["win", "lose"].includes(result.toLowerCase()))
         .withMessage("result must be 'win' or 'lose'."),
-    body("*.guesses")
+    body("results.*.guesses")
         .exists()
         .withMessage("'guesses' is required.")
         .isArray()
         .custom((guesses) => guesses.length > 0)
         .withMessage("guesses must have at least one element."),
-    body("*.guesses.*.character")
+    body("results.*.guesses.*.character")
         .exists()
         .isString()
         .withMessage("guesses.character is required.")

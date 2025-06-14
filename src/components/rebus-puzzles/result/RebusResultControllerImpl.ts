@@ -5,8 +5,8 @@ import { matchedData, validationResult } from "express-validator";
 import { ServerError, ValidationError } from "../../../utils/AppErrors.js";
 import { RebusResultService } from "./RebusResultService.js";
 import { sendResponseSuccess } from "../../../utils/sendResponse.js";
-import { H } from "../../../public/_app/immutable/chunks/scheduler.CWexU-Gu.js";
 import { HttpStatusCode } from "../../../constants/httpStatusCode.enum.js";
+import { ConsoleLog } from "../../../utils/ConsoleLog.js";
 
 export class RebusResultControllerImpl implements RebusResultController {
     private _rebusResultService: RebusResultService;
@@ -48,17 +48,14 @@ export class RebusResultControllerImpl implements RebusResultController {
         if (!req.user?.userId) {
             throw new ValidationError(["User Id is missing"]);
         }
-        const rebusResults: any = matchedData(req);
-        rebusResults.forEach(
-            (result: any) => (result.userId = req.user.userId)
-        );
-        if (!this._isRebusResultArray(rebusResults)) {
+        const { results } = matchedData(req);
+        results.forEach((result: any) => (result.userId = req.user.userId));
+        if (!this._isRebusResultArray(results)) {
             throw new ValidationError(["invalid result for 'Rebus' game."]);
         }
-        const results = await this._rebusResultService.addMultipleRebusResults(
-            rebusResults
-        );
-        if (!results) {
+        const resultsSaved =
+            await this._rebusResultService.addMultipleRebusResults(results);
+        if (!resultsSaved) {
             throw new ServerError("Failed to add rebus results");
         }
         return sendResponseSuccess(
