@@ -12,7 +12,8 @@ export const validateGetCommentsReq = () => [
             const games = [
                 "guess-the-movie",
                 "guess-the-movie-hollywood",
-                "guess-the-movie-bollywood"
+                "guess-the-movie-bollywood",
+                "rebus-puzzles"
             ];
             if (!games.includes(game)) {
                 throw new Error(
