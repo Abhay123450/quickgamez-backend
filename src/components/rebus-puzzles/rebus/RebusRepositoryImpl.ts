@@ -1,8 +1,10 @@
 import { ClientError } from "../../../utils/AppErrors.js";
 import { User } from "../../users/User.js";
+import { RebusResultRepository } from "../result/RebusResultRepository.js";
 import { Rebus } from "./Rebus.js";
 import { RebusModel } from "./rebus.model.js";
 import { RebusRepository } from "./RebusRepository.js";
+import { RebusResultModel } from "../result/rebusResult.model.js";
 
 export class RebusRepositoryImpl implements RebusRepository {
     async addRebus(
@@ -55,7 +57,19 @@ export class RebusRepositoryImpl implements RebusRepository {
         count: number,
         difficulty?: Rebus["difficulty"]
     ): Promise<Rebus[]> {
-        throw new Error("Method not implemented. ");
+        const playedRebus = await RebusResultModel.find({ userId: userId });
+        const playedRebusIds = playedRebus.map(
+            (rebusResult) => rebusResult.rebusId
+        );
+        const filter: Partial<Pick<Rebus, "difficulty">> = {};
+        if (difficulty) {
+            filter.difficulty = difficulty;
+        }
+        const rebusDocuments = await RebusModel.aggregate([
+            { $match: { _id: { $nin: playedRebusIds }, ...filter } },
+            { $sample: { size: count } }
+        ]);
+        return rebusDocuments.map((r) => this._convertRebusDocumentToRebus(r));
     }
 
     async deleteRebus(rebusId: string): Promise<Rebus> {

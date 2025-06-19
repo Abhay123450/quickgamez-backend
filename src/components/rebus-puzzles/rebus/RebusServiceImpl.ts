@@ -54,7 +54,11 @@ export class RebusServiceImpl implements RebusService {
         difficulty: Rebus["difficulty"],
         count: number
     ): Promise<Rebus[]> {
-        throw new Error("Method not implemented.");
+        return this._rebusRepository.getUnplayedRebus(
+            userId,
+            count,
+            difficulty
+        );
     }
     async deleteRebus(rebusId: string): Promise<boolean> {
         const deletedRebus = await this._rebusRepository.deleteRebus(rebusId);

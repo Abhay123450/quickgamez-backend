@@ -5,11 +5,15 @@ import { handleFile } from "./handleFile.js";
 import {
     validateAddRebusReq,
     validateGetRandomRebusReq,
+    validateGetUnplayedRebusesReq,
     validateRebusIdParam
 } from "./rebus.validate.js";
 import { RebusServiceImpl } from "./RebusServiceImpl.js";
 import { FileUploadSerivceImpl } from "../../file-upload/FileUploadServiceImpl.js";
-import { authenticateUser } from "../../../middlewares/userAuth.middleware.js";
+import {
+    authenticateUser,
+    isUserAuthenticated
+} from "../../../middlewares/userAuth.middleware.js";
 import { RebusRepositoryImpl } from "./RebusRepositoryImpl.js";
 import { rebusResultRouter } from "../result/rebusResult.route.js";
 import { leaderboardRouter } from "../leaderboard/leaderboard.route.js";
@@ -35,6 +39,8 @@ router
 router
     .route("/rebus/unplayed")
     .get(
+        authenticateUser,
+        validateGetUnplayedRebusesReq(),
         catchAsycError(rebusController.getUnplayedRebus.bind(rebusController))
     );
 router

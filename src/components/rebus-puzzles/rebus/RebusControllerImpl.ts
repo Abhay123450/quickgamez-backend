@@ -94,7 +94,29 @@ export class RebusControllerImpl implements RebusController {
         res: Response,
         next: NextFunction
     ): Promise<void> {
-        throw new Error("Method not implemented.");
+        const errors = validationResult(req);
+        const errorMessages = errors.array().map((error) => error.msg);
+        if (!errors.isEmpty()) {
+            throw new ValidationError(errorMessages);
+        }
+        const { difficulty, count } = matchedData(req);
+
+        const userId = req.user?.userId;
+        if (!userId) {
+            console.log("userId not found. redirecting");
+            res.redirect(301, `random?difficulty=${difficulty}&count=${count}`);
+            return;
+        }
+        console.log("userId found");
+        const rebuses = await this._rebusService.getUnplayedRebus(
+            userId,
+            difficulty,
+            count
+        );
+        if (!rebuses) {
+            throw new ServerError("Failed to get rebus");
+        }
+        return sendResponseSuccess(res, rebuses);
     }
     async updateRebus(
         req: Request,

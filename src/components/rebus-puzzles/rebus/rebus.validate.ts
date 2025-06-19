@@ -64,3 +64,19 @@ export const validateRebusIdParam = () => [
         .isLength({ min: 24, max: 24 })
         .withMessage("Invalid rebusId.")
 ];
+
+export const validateGetUnplayedRebusesReq = () => [
+    query("difficulty")
+        .isString()
+        .withMessage("Difficulty is required.")
+        .trim()
+        .escape()
+        .custom((difficulty: string) => difficulty in Difficulty)
+        .withMessage("difficulty must be 'easy', 'medium' or 'hard'."),
+    query("count")
+        .isNumeric()
+        .withMessage("count is required.")
+        .custom((count) => count > 0)
+        .withMessage("count must be a number greater than 0.")
+        .customSanitizer((value) => parseInt(value, 10))
+];
