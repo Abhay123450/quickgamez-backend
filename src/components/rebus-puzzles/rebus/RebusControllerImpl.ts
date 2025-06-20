@@ -27,8 +27,6 @@ export class RebusControllerImpl implements RebusController {
             throw new ValidationError(errorMessages);
         }
         const { answer, difficulty, explanation } = req.body;
-        ConsoleLog.info(JSON.stringify(req.body));
-        ConsoleLog.info(JSON.stringify(req.file));
 
         const rebus = await this._rebusService.addRebus({
             rebusImage: req.file,
@@ -103,11 +101,8 @@ export class RebusControllerImpl implements RebusController {
 
         const userId = req.user?.userId;
         if (!userId) {
-            console.log("userId not found. redirecting");
-            res.redirect(301, `random?difficulty=${difficulty}&count=${count}`);
-            return;
+            throw new ValidationError(["User Id is missing. Login required."]);
         }
-        console.log("userId found");
         const rebuses = await this._rebusService.getUnplayedRebus(
             userId,
             difficulty,
