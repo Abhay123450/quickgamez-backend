@@ -11,11 +11,12 @@ export const validateAddRebusReq = () => [
             "image/jpeg",
             "image/png",
             "image/jpg",
+            "image/webp",
             "image/svg+xml"
         ];
         if (!allowedFileTypes.includes(req.file.mimetype)) {
             throw new Error(
-                "Invalid file type. Only JPEG, PNG, JPG and SVG files are allowed."
+                "Invalid file type. Only JPEG, PNG, JPG, WEBP and SVG files are allowed."
             );
         }
         return true;
