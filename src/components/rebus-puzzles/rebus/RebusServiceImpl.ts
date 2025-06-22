@@ -44,15 +44,15 @@ export class RebusServiceImpl implements RebusService {
         throw new Error("Method not implemented.");
     }
     async getRandomRebus(
-        difficulty: Rebus["difficulty"],
-        count: number
+        count: number,
+        difficulty?: Rebus["difficulty"]
     ): Promise<Rebus[]> {
         return this._rebusRepository.getRandomRebus(count, difficulty);
     }
     async getUnplayedRebus(
         userId: User["userId"],
-        difficulty: Rebus["difficulty"],
-        count: number
+        count: number,
+        difficulty?: Rebus["difficulty"]
     ): Promise<Rebus[]> {
         return this._rebusRepository.getUnplayedRebus(
             userId,

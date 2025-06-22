@@ -43,6 +43,7 @@ export const validateAddRebusReq = () => [
 
 export const validateGetRandomRebusReq = () => [
     query("difficulty")
+        .optional()
         .isString()
         .trim()
         .escape()
@@ -68,6 +69,7 @@ export const validateRebusIdParam = () => [
 
 export const validateGetUnplayedRebusesReq = () => [
     query("difficulty")
+        .optional()
         .isString()
         .withMessage("Difficulty is required.")
         .trim()

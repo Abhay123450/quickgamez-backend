@@ -12,13 +12,13 @@ export interface RebusService {
         count?: number
     ): Promise<Rebus[]>;
     getRandomRebus(
-        difficulty: Rebus["difficulty"],
-        count: number
+        count: number,
+        difficulty?: Rebus["difficulty"]
     ): Promise<Rebus[]>;
     getUnplayedRebus(
         userId: User["userId"],
-        difficulty: Rebus["difficulty"],
-        count: number
+        count: number,
+        difficulty?: Rebus["difficulty"]
     ): Promise<Rebus[]>;
     deleteRebus(rebusId: string): Promise<boolean>;
 }

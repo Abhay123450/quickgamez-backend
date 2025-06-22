@@ -79,8 +79,8 @@ export class RebusControllerImpl implements RebusController {
         }
         const { difficulty, count } = matchedData(req);
         const rebus = await this._rebusService.getRandomRebus(
-            difficulty,
-            count
+            count,
+            difficulty
         );
         if (!rebus) {
             throw new ServerError("Failed to get rebus");
@@ -105,8 +105,8 @@ export class RebusControllerImpl implements RebusController {
         }
         const rebuses = await this._rebusService.getUnplayedRebus(
             userId,
-            difficulty,
-            count
+            count,
+            difficulty
         );
         if (!rebuses) {
             throw new ServerError("Failed to get rebus");
