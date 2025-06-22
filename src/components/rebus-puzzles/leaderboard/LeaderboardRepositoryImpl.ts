@@ -50,38 +50,48 @@ export class LeaderboardRepositoryImpl implements LeaderboardRepository {
         };
 
         const rankings: any = await RebusResultModel.aggregate([
-            {
-                $match: filter
-            },
-            { $project: { userId: 1, score: 1 } },
+            // Step 1: Filter as needed
+            { $match: filter },
+
+            // Step 2: Sort by createdAt ASCENDING — so the oldest is first
+            { $sort: { createdAt: 1 } },
+
+            // Step 3: Group by userId + rebusId to get only the oldest document
             {
                 $group: {
-                    _id: "$userId",
+                    _id: { userId: "$userId", rebusId: "$rebusId" },
+                    score: { $first: "$score" }
+                }
+            },
+
+            // Step 4: Group by userId to aggregate scores and match count
+            {
+                $group: {
+                    _id: "$_id.userId",
                     totalScore: { $sum: "$score" },
                     matchesPlayed: { $sum: 1 }
                 }
             },
+
+            // Step 5: Sort by score
             { $sort: { totalScore: -1 } },
+
+            // Step 6: Limit top users
             { $limit: count },
+
+            // Step 7: Lookup user info
             {
                 $lookup: {
                     from: "users",
                     localField: "_id",
                     foreignField: "_id",
                     as: "user",
-                    pipeline: [
-                        {
-                            $project: {
-                                username: 1,
-                                name: 1
-                            }
-                        }
-                    ]
+                    pipeline: [{ $project: { username: 1, name: 1 } }]
                 }
             },
-            {
-                $unwind: "$user"
-            }
+
+            // Step 8: Unwind the joined user info
+            { $unwind: "$user" }
         ]);
 
         ConsoleLog.info(`rankings for ${time}: ${JSON.stringify(rankings)}`);
