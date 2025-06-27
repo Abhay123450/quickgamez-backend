@@ -12,5 +12,14 @@ export interface Friendship {
     userBId: User["userId"];
     createdAt: Date;
     updatedAt: Date;
-    status: "pending" | "accepted" | "rejected" | "blocked";
+    status: FriendshipStatus;
 }
+
+export const friendshipStatus = [
+    "pending",
+    "accepted",
+    "rejected",
+    "blocked"
+] as const;
+
+export type FriendshipStatus = (typeof friendshipStatus)[number];
