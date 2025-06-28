@@ -1,9 +1,5 @@
 import { Document, model, Schema } from "mongoose";
-import {
-    Friendship,
-    friendshipStatus,
-    type FriendshipStatus
-} from "./Friends.js";
+import { Friendship, friendshipStatus } from "./Friends.js";
 
 export interface FreindsDocument
     extends Omit<Friendship, "userAId" | "userBId" | "id">,
@@ -25,13 +21,23 @@ const friendsSchema = new Schema<FreindsDocument>(
         status: {
             type: String,
             enum: friendshipStatus,
-            required: true
+            required: true,
+            default: "pending"
+        },
+        friendSince: {
+            type: Date,
+            default: null
         }
     },
     {
         timestamps: true
     }
 );
+
+friendsSchema.index({ userAId: 1, userBId: 1 }, { unique: true });
+
+friendsSchema.index({ userAId: 1, status: 1 }, { unique: false });
+friendsSchema.index({ userBId: 1, status: 1 }, { unique: false });
 
 export const FriendModel = model<FreindsDocument>(
     "Friend",
