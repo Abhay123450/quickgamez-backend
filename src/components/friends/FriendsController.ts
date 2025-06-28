@@ -1,6 +1,11 @@
 import { NextFunction, Request, Response } from "express";
 
 export interface FriendController {
+    getFriendRequests: (
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ) => void;
     sendFriendRequest: (
         req: Request,
         res: Response,
