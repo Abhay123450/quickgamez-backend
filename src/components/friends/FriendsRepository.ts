@@ -1,5 +1,10 @@
 import { User } from "../users/User.js";
-import type { Friend, FriendRequest, Friendship } from "./Friends.js";
+import type {
+    Friend,
+    FriendRequest,
+    Friendship,
+    FriendshipStatus
+} from "./Friends.js";
 
 export interface FriendsRepository {
     addFriend: (
@@ -11,13 +16,10 @@ export interface FriendsRepository {
         page: number,
         limit: number
     ) => Promise<FriendRequest[]>;
-    rejectFriendRequest: (
+    updateFriendRequestStatus: (
         friendshipId: Friendship["id"],
-        userId: User["userId"]
-    ) => Promise<boolean>;
-    acceptFriendRequest: (
-        friendshipId: Friendship["id"],
-        userId: User["userId"]
+        userId: User["userId"],
+        status: FriendshipStatus
     ) => Promise<boolean>;
     getFriends: (
         userId: User["userId"],

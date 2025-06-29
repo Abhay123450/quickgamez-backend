@@ -11,6 +11,11 @@ export interface FriendController {
         res: Response,
         next: NextFunction
     ) => void;
+    cancelFriendRequest: (
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ) => void;
     acceptFriendRequest: (
         req: Request,
         res: Response,
@@ -21,6 +26,8 @@ export interface FriendController {
         res: Response,
         next: NextFunction
     ) => void;
+    blockUser: (req: Request, res: Response, next: NextFunction) => void;
+    unblockUser: (req: Request, res: Response, next: NextFunction) => void;
     removeFriend: (req: Request, res: Response, next: NextFunction) => void;
     getMyFriends: (req: Request, res: Response, next: NextFunction) => void;
 }

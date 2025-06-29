@@ -8,6 +8,7 @@ export interface FriendsService {
     ) => Promise<boolean>;
     acceptFriendRequest: (friendshipId: Friendship["id"]) => Promise<boolean>;
     rejectFriendRequest: (friendshipId: Friendship["id"]) => Promise<boolean>;
+    cancelFriendRequest: (friendshipId: Friendship["id"]) => Promise<boolean>;
     removeFriend: (
         userId: User["userId"],
         friendId: User["userId"]
@@ -22,4 +23,12 @@ export interface FriendsService {
         page: number,
         limit: number
     ) => Promise<Friend[]>;
+    blockUser: (
+        userId: User["userId"],
+        friendId: User["userId"]
+    ) => Promise<boolean>;
+    unblockUser: (
+        userId: User["userId"],
+        friendId: User["userId"]
+    ) => Promise<boolean>;
 }

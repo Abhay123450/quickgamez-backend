@@ -32,6 +32,7 @@ export type FriendRequest = {
 
 /** friend */
 export type Friend = {
+    friendshipId: Friendship["id"];
     user: Pick<User, "userId" | "username" | "name" | "avatar">;
     status: FriendshipStatus;
     friendSince: Date;
