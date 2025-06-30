@@ -20,6 +20,7 @@ import { leaderboardRouter } from "./components/guess-the-movie/leaderboard/lead
 import { notificationRouter } from "./components/notifications/notification.route.js";
 import { contactUsRouter } from "./components/contact-us/contactUs.route.js";
 import { rebusRouter } from "./components/rebus-puzzles/rebus/rebus.route.js";
+import { friendsRouter } from "./components/friends/friends.route.js";
 
 const port: number = Number(process.env.PORT) || 4000;
 
@@ -70,6 +71,7 @@ app.use("/api/v1", leaderboardRouter);
 app.use("/api/v1", notificationRouter);
 app.use("/api/v1", contactUsRouter);
 app.use("/api/v1", rebusRouter);
+app.use("/api/v1", friendsRouter);
 
 app.get("/api/v1/health-check", (req: Request, res: Response) => {
     sendResponseSuccess(res, "Server is up and running");
