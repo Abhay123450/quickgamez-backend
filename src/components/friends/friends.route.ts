@@ -1,6 +1,9 @@
 import { Router } from "express";
 import { authenticateUser } from "../../middlewares/userAuth.middleware.js";
-import { validateSendFriendRequestReq } from "./friends.validate.js";
+import {
+    validateGetFriendRequestsReq,
+    validateSendFriendRequestReq
+} from "./friends.validate.js";
 import { FriendsRepositoryImpl } from "./FriendsRepositoryImpl.js";
 import { FriendsServiceImpl } from "./FriendsServiceImpl.js";
 import { NotificationServiceImpl } from "../notifications/NotificationServiceImpl.js";
@@ -21,6 +24,13 @@ router
         catchAsycError(
             friendsController.sendFriendRequest.bind(friendsController)
         )
+    )
+    .get(
+        authenticateUser,
+        validateGetFriendRequestsReq(),
+        catchAsycError(
+            friendsController.getFriendRequests.bind(friendsController)
+        )
     );
 router.route("/friends/requests/:requestId/accept").put();
 router.route("/friends/requests/:requestId/reject").put();
@@ -28,7 +38,6 @@ router.route("/friends/requests/:requestId").delete();
 router.route("/friends/block/:userId").post();
 router.route("/friends/unblock/:userId").post();
 router.route("/friends/unfriend/:friendUserId").post();
-router.route("/friends/requests").get();
 router.route("/friends").get();
 
 export const friendsRouter = router;

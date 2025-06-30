@@ -12,10 +12,12 @@ const friendsSchema = new Schema<FreindsDocument>(
     {
         userAId: {
             type: Schema.Types.ObjectId,
+            ref: "User",
             required: true
         },
         userBId: {
             type: Schema.Types.ObjectId,
+            ref: "User",
             required: true
         },
         status: {

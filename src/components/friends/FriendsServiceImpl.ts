@@ -41,7 +41,11 @@ export class FriendsServiceImpl implements FriendsService {
         page: number,
         limit: number
     ): Promise<FriendRequest[]> {
-        throw new Error("Method not implemented.");
+        return await this._friendsRepository.getFriendRequests(
+            userId,
+            page,
+            limit
+        );
     }
     async getFriends(
         userId: User["userId"],
