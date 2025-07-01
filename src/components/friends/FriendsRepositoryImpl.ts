@@ -26,6 +26,7 @@ export class FriendsRepositoryImpl implements FriendsRepository {
         userId: User["userId"],
         friendId: User["userId"]
     ): Promise<boolean> {
+        try {
         const friendship = new FriendModel({
             userAId: userId,
             userBId: friendId
@@ -35,6 +36,13 @@ export class FriendsRepositoryImpl implements FriendsRepository {
             throw new Error("Failed to add friend");
         }
         return true;
+        } catch (error: any) {
+            if (error.code === 11000) {
+                return true;
+            }
+            console.error(`Error adding friend: ${JSON.stringify(error)}`);
+            throw new ServerError("Failed to add friend");
+        }
     }
     async getFriendRequests(
         userId: User["userId"],
