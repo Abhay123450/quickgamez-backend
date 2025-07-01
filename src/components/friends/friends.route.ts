@@ -18,6 +18,17 @@ const friendsService = new FriendsServiceImpl(friendsRepository);
 const friendsController = new FriendsControllerImpl(friendsService);
 
 router
+    .route("/friends/requests/:requestId/accept")
+    .put(
+        authenticateUser,
+        validateAcceptFriendRequestReq(),
+        catchAsycError(
+            friendsController.acceptFriendRequest.bind(friendsController)
+        )
+    );
+router.route("/friends/requests/:requestId/reject").put();
+router.route("/friends/requests/:requestId").delete();
+router
     .route("/friends/requests")
     .post(
         authenticateUser,
@@ -33,17 +44,6 @@ router
             friendsController.getFriendRequests.bind(friendsController)
         )
     );
-router
-    .route("/friends/requests/:requestId/accept")
-    .put(
-        authenticateUser,
-        validateAcceptFriendRequestReq(),
-        catchAsycError(
-            friendsController.acceptFriendRequest.bind(friendsController)
-        )
-    );
-router.route("/friends/requests/:requestId/reject").put();
-router.route("/friends/requests/:requestId").delete();
 router.route("/friends/block/:userId").post();
 router.route("/friends/unblock/:userId").post();
 router.route("/friends/unfriend/:friendUserId").post();
