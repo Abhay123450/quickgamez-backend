@@ -6,9 +6,18 @@ export interface FriendsService {
         from: User["userId"],
         to: User["userId"]
     ) => Promise<boolean>;
-    acceptFriendRequest: (friendshipId: Friendship["id"]) => Promise<boolean>;
-    rejectFriendRequest: (friendshipId: Friendship["id"]) => Promise<boolean>;
-    cancelFriendRequest: (friendshipId: Friendship["id"]) => Promise<boolean>;
+    acceptFriendRequest: (
+        userId: User["userId"],
+        friendshipId: Friendship["id"]
+    ) => Promise<boolean>;
+    rejectFriendRequest: (
+        userId: User["userId"],
+        friendshipId: Friendship["id"]
+    ) => Promise<boolean>;
+    cancelFriendRequest: (
+        userId: User["userId"],
+        friendshipId: Friendship["id"]
+    ) => Promise<boolean>;
     removeFriend: (
         userId: User["userId"],
         friendId: User["userId"]
