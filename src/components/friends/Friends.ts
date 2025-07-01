@@ -37,3 +37,12 @@ export type Friend = {
     status: FriendshipStatus;
     friendSince: Date;
 };
+
+export const friendsSort = [
+    "newest",
+    "oldest",
+    "a-z",
+    "z-a",
+    "synergy"
+] as const;
+export type FriendsSort = (typeof friendsSort)[number];

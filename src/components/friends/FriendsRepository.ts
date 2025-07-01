@@ -3,7 +3,8 @@ import type {
     Friend,
     FriendRequest,
     Friendship,
-    FriendshipStatus
+    FriendshipStatus,
+    FriendsSort
 } from "./Friends.js";
 
 export interface FriendsRepository {
@@ -24,7 +25,8 @@ export interface FriendsRepository {
     getFriends: (
         userId: User["userId"],
         page: number,
-        limit: number
+        limit: number,
+        sort: FriendsSort
     ) => Promise<Friend[]>;
     removeFriend: (
         userId: User["userId"],

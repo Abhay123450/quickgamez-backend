@@ -1,5 +1,5 @@
 import { User } from "../users/User.js";
-import { Friend, FriendRequest, Friendship } from "./Friends.js";
+import { Friend, FriendRequest, Friendship, FriendsSort } from "./Friends.js";
 
 export interface FriendsService {
     sendFriendRequest: (
@@ -30,7 +30,8 @@ export interface FriendsService {
     getFriends: (
         userId: User["userId"],
         page: number,
-        limit: number
+        limit: number,
+        sort: FriendsSort
     ) => Promise<Friend[]>;
     blockUser: (
         userId: User["userId"],

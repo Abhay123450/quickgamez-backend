@@ -4,7 +4,8 @@ import {
     Friend,
     FriendRequest,
     Friendship,
-    FriendshipStatus
+    FriendshipStatus,
+    FriendsSort
 } from "./Friends.js";
 import { FreindsDocument, FriendModel } from "./friends.model.js";
 import { FriendsRepository } from "./FriendsRepository.js";
@@ -96,7 +97,8 @@ export class FriendsRepositoryImpl implements FriendsRepository {
     async getFriends(
         userId: User["userId"],
         page: number,
-        limit: number
+        limit: number,
+        sort: FriendsSort
     ): Promise<Friend[]> {
         throw new Error("Method not implemented.");
     }
