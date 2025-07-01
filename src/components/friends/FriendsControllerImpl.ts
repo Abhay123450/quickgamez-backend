@@ -38,10 +38,10 @@ export class FriendsControllerImpl implements FriendController {
         if (!userId) {
             throw new ValidationError(["Login Required."]);
         }
-        const { sendToUserId } = matchedData(req);
+        const { recieverUserId } = matchedData(req);
         const friendRequestSent = await this._friendsService.sendFriendRequest(
             userId,
-            sendToUserId
+            recieverUserId
         );
         if (!friendRequestSent) {
             throw new ServerError("Failed to send friend request");
