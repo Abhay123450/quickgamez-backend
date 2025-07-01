@@ -41,7 +41,8 @@ export class FriendsRepositoryImpl implements FriendsRepository {
         limit: number
     ): Promise<FriendRequest[]> {
         const friendRequests = await FriendModel.find({
-            userBId: userId
+            userBId: userId,
+            status: "pending"
         })
             .skip((page - 1) * limit)
             .limit(limit)
