@@ -1,4 +1,4 @@
-import { body, query } from "express-validator";
+import { body, param, query } from "express-validator";
 
 export const validateGetFriendRequestsReq = () => [
     query("page")
@@ -25,4 +25,14 @@ export const validateSendFriendRequestReq = () => [
         .escape()
         .isMongoId()
         .withMessage("Invalid recieverUserId.")
+];
+
+export const validateAcceptFriendRequestReq = () => [
+    param("requestId")
+        .exists()
+        .withMessage("requestId is required.")
+        .trim()
+        .escape()
+        .isMongoId()
+        .withMessage("Invalid requestId.")
 ];

@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { authenticateUser } from "../../middlewares/userAuth.middleware.js";
 import {
+    validateAcceptFriendRequestReq,
     validateGetFriendRequestsReq,
     validateSendFriendRequestReq
 } from "./friends.validate.js";
@@ -32,7 +33,15 @@ router
             friendsController.getFriendRequests.bind(friendsController)
         )
     );
-router.route("/friends/requests/:requestId/accept").put();
+router
+    .route("/friends/requests/:requestId/accept")
+    .put(
+        authenticateUser,
+        validateAcceptFriendRequestReq(),
+        catchAsycError(
+            friendsController.acceptFriendRequest.bind(friendsController)
+        )
+    );
 router.route("/friends/requests/:requestId/reject").put();
 router.route("/friends/requests/:requestId").delete();
 router.route("/friends/block/:userId").post();
