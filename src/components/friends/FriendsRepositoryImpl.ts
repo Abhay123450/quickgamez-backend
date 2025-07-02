@@ -27,15 +27,15 @@ export class FriendsRepositoryImpl implements FriendsRepository {
         friendId: User["userId"]
     ): Promise<boolean> {
         try {
-        const friendship = new FriendModel({
-            userAId: userId,
-            userBId: friendId
-        });
-        const friendshipSaved = await friendship.save();
-        if (!friendshipSaved) {
-            throw new Error("Failed to add friend");
-        }
-        return true;
+            const friendship = new FriendModel({
+                userAId: userId,
+                userBId: friendId
+            });
+            const friendshipSaved = await friendship.save();
+            if (!friendshipSaved) {
+                throw new Error("Failed to add friend");
+            }
+            return true;
         } catch (error: any) {
             if (error.code === 11000) {
                 return true;
@@ -90,7 +90,7 @@ export class FriendsRepositoryImpl implements FriendsRepository {
         friendshipId: Friendship["id"],
         userId: User["userId"]
     ): Promise<boolean> {
-        const rejected = await FriendModel.findByIdAndUpdate(
+        const rejected: any = await FriendModel.findByIdAndUpdate(
             {
                 _id: friendshipId,
                 userBId: userId
@@ -108,7 +108,49 @@ export class FriendsRepositoryImpl implements FriendsRepository {
         limit: number,
         sort: FriendsSort
     ): Promise<Friend[]> {
-        throw new Error("Method not implemented.");
+        const sortObj: { createdAt: 1 | -1 } =
+            sort === "newest" ? { createdAt: -1 } : { createdAt: 1 };
+        const friendship = await FriendModel.find({
+            $or: [{ userAId: userId }, { userBId: userId }],
+            status: "accepted"
+        })
+            .sort(sortObj)
+            .skip((page - 1) * limit)
+            .limit(limit)
+            .populate<Pick<User, "userId" | "username" | "name" | "avatar">>(
+                "userAId",
+                "userId username name avatar"
+            )
+            .populate<Pick<User, "userId" | "username" | "name" | "avatar">>(
+                "userBId",
+                "userId username name avatar"
+            );
+        return friendship.map((friendship: any) => {
+            if (friendship.userAId._id.toString() === userId) {
+                return {
+                    friendshipId: friendship.id,
+                    user: {
+                        userId: friendship.userBId._id.toString(),
+                        username: friendship.userBId.username,
+                        name: friendship.userBId.name,
+                        avatar: friendship.userBId.avatar
+                    },
+                    status: friendship.status,
+                    friendSince: friendship.friendSince
+                };
+            }
+            return {
+                friendshipId: friendship.id,
+                user: {
+                    userId: friendship.userAId._id.toString(),
+                    username: friendship.userAId.username,
+                    name: friendship.userAId.name,
+                    avatar: friendship.userAId.avatar
+                },
+                status: friendship.status,
+                friendSince: friendship.friendSince
+            };
+        });
     }
     async removeFriend(
         userId: User["userId"],
