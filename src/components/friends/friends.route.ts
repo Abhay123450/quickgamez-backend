@@ -3,12 +3,11 @@ import { authenticateUser } from "../../middlewares/userAuth.middleware.js";
 import {
     validateAcceptFriendRequestReq,
     validateGetFriendRequestsReq,
+    validateGetFriendsReq,
     validateSendFriendRequestReq
 } from "./friends.validate.js";
 import { FriendsRepositoryImpl } from "./FriendsRepositoryImpl.js";
 import { FriendsServiceImpl } from "./FriendsServiceImpl.js";
-import { NotificationServiceImpl } from "../notifications/NotificationServiceImpl.js";
-import { NotificationRepositoryImpl } from "../notifications/NotificationRepositoryImpl.js";
 import { FriendsControllerImpl } from "./FriendsControllerImpl.js";
 import { catchAsycError } from "../../middlewares/catchAsyncError.js";
 const router = Router();
@@ -47,6 +46,12 @@ router
 router.route("/friends/block/:userId").post();
 router.route("/friends/unblock/:userId").post();
 router.route("/friends/unfriend/:friendUserId").post();
-router.route("/friends").get();
+router
+    .route("/friends")
+    .get(
+        authenticateUser,
+        validateGetFriendsReq(),
+        catchAsycError(friendsController.getMyFriends.bind(friendsController))
+    );
 
 export const friendsRouter = router;

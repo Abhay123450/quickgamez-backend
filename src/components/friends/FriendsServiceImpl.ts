@@ -1,6 +1,6 @@
 import { NotificationService } from "../notifications/NotificationService.js";
 import { User } from "../users/User.js";
-import { Friend, FriendRequest, Friendship } from "./Friends.js";
+import { Friend, FriendRequest, Friendship, FriendsSort } from "./Friends.js";
 import { FriendsRepository } from "./FriendsRepository.js";
 import { FriendsService } from "./FriendsService.js";
 
@@ -55,9 +55,15 @@ export class FriendsServiceImpl implements FriendsService {
     async getFriends(
         userId: User["userId"],
         page: number,
-        limit: number
+        limit: number,
+        sort: FriendsSort
     ): Promise<Friend[]> {
-        throw new Error("Method not implemented.");
+        return await this._friendsRepository.getFriends(
+            userId,
+            page,
+            limit,
+            sort
+        );
     }
     async blockUser(
         userId: User["userId"],
