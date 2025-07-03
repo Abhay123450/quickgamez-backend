@@ -29,7 +29,29 @@ const friendsSchema = new Schema<FreindsDocument>(
         friendSince: {
             type: Date,
             default: null
-        }
+        },
+        events: [
+            {
+                createdAt: {
+                    type: Date,
+                    default: Date.now(),
+                    required: true
+                },
+                status: {
+                    type: String,
+                    enum: friendshipStatus,
+                    required: true
+                },
+                user: {
+                    type: Schema.Types.ObjectId,
+                    ref: "User",
+                    required: true
+                },
+                description: {
+                    type: String
+                }
+            }
+        ]
     },
     {
         timestamps: true

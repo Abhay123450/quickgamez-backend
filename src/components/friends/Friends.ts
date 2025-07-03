@@ -12,6 +12,12 @@ export interface Friendship {
     status: FriendshipStatus;
     /** date when the friend request was accepted */
     friendSince: Date | null;
+    events: {
+        createdAt: Date;
+        status: FriendshipStatus;
+        user: Pick<User, "userId" | "username" | "name" | "avatar">;
+        description: string;
+    }[];
 }
 
 export const friendshipStatus = [
