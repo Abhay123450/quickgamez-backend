@@ -29,7 +29,16 @@ export class FriendsRepositoryImpl implements FriendsRepository {
         try {
             const friendship = new FriendModel({
                 userAId: userId,
-                userBId: friendId
+                userBId: friendId,
+                status: "pending",
+                events: [
+                    {
+                        createdAt: new Date(),
+                        user: userId,
+                        status: "pending",
+                        description: "userA sent a friend request"
+                    }
+                ]
             });
             const friendshipSaved = await friendship.save();
             if (!friendshipSaved) {
