@@ -15,17 +15,14 @@ export interface Friendship {
     events: {
         createdAt: Date;
         status: FriendshipStatus;
-        user: Pick<User, "userId" | "username" | "name" | "avatar">;
+        user:
+            | User["userId"]
+            | Pick<User, "userId" | "username" | "name" | "avatar">;
         description: string;
     }[];
 }
 
-export const friendshipStatus = [
-    "pending",
-    "accepted",
-    "rejected",
-    "blocked"
-] as const;
+export const friendshipStatus = ["pending", "accepted", "rejected"] as const;
 
 export type FriendshipStatus = (typeof friendshipStatus)[number];
 
