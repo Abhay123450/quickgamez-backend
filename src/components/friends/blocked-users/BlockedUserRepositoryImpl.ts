@@ -1,7 +1,7 @@
 import { HttpStatusCode } from "../../../constants/httpStatusCode.enum.js";
 import { ClientError, ServerError } from "../../../utils/AppErrors.js";
-import { BlockedUser } from "./BlockedUser.js";
-import { BlockedUserModel } from "./blockedUser.model.js";
+import { BlockedUser, BlockUser } from "./BlockedUser.js";
+import { BlockUserModel } from "./blockedUser.model.js";
 import { BlockedUserRepository } from "./BlockedUserRepository.js";
 
 export class BlockedUserRepositoryImpl implements BlockedUserRepository {
@@ -10,14 +10,22 @@ export class BlockedUserRepositoryImpl implements BlockedUserRepository {
         page: number,
         limit: number
     ): Promise<BlockedUser[]> {
-        throw new Error("Method not implemented.");
+        const blockedUsers = await BlockUserModel.find({
+            blockerUserId: userId
+        })
+            .skip((page - 1) * limit)
+            .limit(limit)
+            .populate("blockedUserId", "username name avatar");
+        return blockedUsers.map((blockedUser) => {
+            return this._convertToBlockedUser(blockedUser);
+        });
     }
     async blockUser(
         blockerUserId: string,
         blockedUserId: string
     ): Promise<boolean> {
         try {
-            await BlockedUserModel.create({
+            await BlockUserModel.create({
                 blockerUserId,
                 blockedUserId
             });
@@ -43,6 +51,23 @@ export class BlockedUserRepositoryImpl implements BlockedUserRepository {
         blockerUserId: string,
         blockedUserId: string
     ): Promise<boolean> {
-        throw new Error("Method not implemented.");
+        const blockedUser = await BlockUserModel.findOne({
+            blockerUserId,
+            blockedUserId
+        });
+        return !!blockedUser;
+    }
+
+    private _convertToBlockedUser(document: any): BlockedUser {
+        return {
+            blockedUserId: document.blockedUserId,
+            blockedUser: {
+                userId: document.blockedUserId.userId,
+                username: document.blockedUserId.username,
+                name: document.blockedUserId.name,
+                avatar: document.blockedUserId.avatar
+            },
+            blockedSince: document.createdAt
+        };
     }
 }

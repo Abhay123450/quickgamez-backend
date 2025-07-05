@@ -1,14 +1,14 @@
 import { Document, model, Schema, Types } from "mongoose";
-import { BlockedUser } from "./BlockedUser.js";
+import { BlockUser } from "./BlockedUser.js";
 
-export interface BlockedUserDocument
-    extends Pick<BlockedUser, "createdAt" | "updatedAt">,
+export interface BlockUserDocument
+    extends Pick<BlockUser, "createdAt" | "updatedAt">,
         Document {
     blockerUserId: Types.ObjectId;
     blockedUserId: Types.ObjectId;
 }
 
-const blockedUserSchema = new Schema<BlockedUserDocument>(
+const blockUserSchema = new Schema<BlockUserDocument>(
     {
         blockerUserId: {
             type: Schema.Types.ObjectId,
@@ -26,13 +26,10 @@ const blockedUserSchema = new Schema<BlockedUserDocument>(
     }
 );
 
-blockedUserSchema.index(
-    { blockerUserId: 1, blockedUserId: 1 },
-    { unique: true }
-);
+blockUserSchema.index({ blockerUserId: 1, blockedUserId: 1 }, { unique: true });
 
-export const BlockedUserModel = model<BlockedUserDocument>(
+export const BlockUserModel = model<BlockUserDocument>(
     "BlockedUser",
-    blockedUserSchema,
+    blockUserSchema,
     "blockedUsers"
 );
