@@ -1,5 +1,5 @@
 import { Document, model, Schema, Types } from "mongoose";
-import { BlockUser } from "./BlockedUser.js";
+import { BlockUser } from "./BlockUser.js";
 
 export interface BlockUserDocument
     extends Pick<BlockUser, "createdAt" | "updatedAt">,

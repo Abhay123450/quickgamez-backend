@@ -1,4 +1,4 @@
-import { BlockedUser } from "./BlockedUser.js";
+import { BlockedUser } from "./BlockUser.js";
 
 export interface BlockUserRepository {
     getBlockedUsers(

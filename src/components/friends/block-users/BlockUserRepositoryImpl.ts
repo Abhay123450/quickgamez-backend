@@ -1,7 +1,7 @@
 import { HttpStatusCode } from "../../../constants/httpStatusCode.enum.js";
 import { ClientError, ServerError } from "../../../utils/AppErrors.js";
-import { BlockedUser, BlockUser } from "./BlockedUser.js";
-import { BlockUserModel } from "./blockedUser.model.js";
+import { BlockedUser } from "./BlockUser.js";
+import { BlockUserModel } from "./blockUser.model.js";
 import { BlockUserRepository } from "./BlockUserRepository.js";
 
 export class BlockUserRepositoryImpl implements BlockUserRepository {
