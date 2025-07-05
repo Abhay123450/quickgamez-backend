@@ -1,6 +1,6 @@
 import { BlockedUser } from "./BlockedUser.js";
 
-export interface BlockedUserRepository {
+export interface BlockUserRepository {
     getBlockedUsers(
         userId: string,
         page: number,

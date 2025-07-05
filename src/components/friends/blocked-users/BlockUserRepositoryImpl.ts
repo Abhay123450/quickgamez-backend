@@ -2,9 +2,9 @@ import { HttpStatusCode } from "../../../constants/httpStatusCode.enum.js";
 import { ClientError, ServerError } from "../../../utils/AppErrors.js";
 import { BlockedUser, BlockUser } from "./BlockedUser.js";
 import { BlockUserModel } from "./blockedUser.model.js";
-import { BlockedUserRepository } from "./BlockedUserRepository.js";
+import { BlockUserRepository } from "./BlockUserRepository.js";
 
-export class BlockedUserRepositoryImpl implements BlockedUserRepository {
+export class BlockUserRepositoryImpl implements BlockUserRepository {
     async getBlockedUsers(
         userId: string,
         page: number,
