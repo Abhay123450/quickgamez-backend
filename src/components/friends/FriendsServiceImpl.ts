@@ -19,6 +19,20 @@ export class FriendsServiceImpl implements FriendsService {
         from: User["userId"],
         to: User["userId"]
     ): Promise<boolean> {
+        const isUserBlockedByOther =
+            await this._blockedUsersRepository.isBlocked(to, from);
+        if (isUserBlockedByOther) {
+            throw new ClientError(
+                "You cannot send a friend request to this user because they have blocked you."
+            );
+        }
+        const hasUserBlockedTheOther =
+            await this._blockedUsersRepository.isBlocked(from, to);
+        if (hasUserBlockedTheOther) {
+            throw new ClientError(
+                "You cannot send a friend request to this user because you have blocked them."
+            );
+        }
         return await this._friendsRepository.addFriend(from, to);
     }
     async acceptFriendRequest(
