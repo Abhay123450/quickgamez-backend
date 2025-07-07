@@ -2,6 +2,7 @@ import { Router } from "express";
 import { authenticateUser } from "../../middlewares/userAuth.middleware.js";
 import {
     validateAcceptFriendRequestReq,
+    validateBlockUserReq,
     validateGetFriendRequestsReq,
     validateGetFriendsReq,
     validateSendFriendRequestReq
@@ -10,10 +11,15 @@ import { FriendsRepositoryImpl } from "./FriendsRepositoryImpl.js";
 import { FriendsServiceImpl } from "./FriendsServiceImpl.js";
 import { FriendsControllerImpl } from "./FriendsControllerImpl.js";
 import { catchAsycError } from "../../middlewares/catchAsyncError.js";
+import { BlockUserRepositoryImpl } from "./block-users/BlockUserRepositoryImpl.js";
 const router = Router();
 
 const friendsRepository = new FriendsRepositoryImpl();
-const friendsService = new FriendsServiceImpl(friendsRepository);
+const blockedUsersRepository = new BlockUserRepositoryImpl();
+const friendsService = new FriendsServiceImpl(
+    friendsRepository,
+    blockedUsersRepository
+);
 const friendsController = new FriendsControllerImpl(friendsService);
 
 router
@@ -43,8 +49,14 @@ router
             friendsController.getFriendRequests.bind(friendsController)
         )
     );
-router.route("/friends/block/:userId").post();
-router.route("/friends/unblock/:userId").post();
+router
+    .route("/friends/block/:blockedUserId")
+    .post(
+        authenticateUser,
+        validateBlockUserReq(),
+        catchAsycError(friendsController.blockUser.bind(friendsController))
+    )
+    .delete();
 router.route("/friends/unfriend/:friendUserId").post();
 router
     .route("/friends")

@@ -73,7 +73,24 @@ export class FriendsControllerImpl implements FriendController {
         throw new Error("Method not implemented.");
     }
     async blockUser(req: Request, res: Response, next: NextFunction) {
-        throw new Error("Method not implemented.");
+        const errors = validationResult(req);
+        const errorMessages = errors.array().map((error) => error.msg);
+        if (!errors.isEmpty()) {
+            throw new ValidationError(errorMessages);
+        }
+        const { userId } = req.user;
+        if (!userId) {
+            throw new ValidationError(["Login Required."]);
+        }
+        const { blockedUserId } = matchedData(req);
+        const userBlocked = await this._friendsService.blockUser(
+            userId,
+            blockedUserId
+        );
+        if (!userBlocked) {
+            throw new ServerError("Failed to block user");
+        }
+        sendResponseSuccess(res, "User blocked successfully");
     }
     async unblockUser(req: Request, res: Response, next: NextFunction) {
         throw new Error("Method not implemented.");

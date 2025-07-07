@@ -65,3 +65,13 @@ export const validateGetFriendsReq = () => [
         })
         .withMessage(`sort must be one of ${Object.values(friendsSort)}`)
 ];
+
+export const validateBlockUserReq = () => [
+    param("blockedUserId")
+        .exists()
+        .withMessage("blockedUserId is required.")
+        .trim()
+        .escape()
+        .isMongoId()
+        .withMessage("Invalid blockedUserId.")
+];
