@@ -105,6 +105,13 @@ export class FriendsServiceImpl implements FriendsService {
         userId: User["userId"],
         friendId: User["userId"]
     ): Promise<boolean> {
-        throw new Error("Method not implemented.");
+        const isUserBlocked = await this._blockedUsersRepository.unblockUser(
+            userId,
+            friendId
+        );
+        if (!isUserBlocked) {
+            throw new Error("Failed to unblock user");
+        }
+        return true;
     }
 }

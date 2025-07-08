@@ -45,7 +45,26 @@ export class BlockUserRepositoryImpl implements BlockUserRepository {
         blockerUserId: string,
         blockedUserId: string
     ): Promise<boolean> {
-        throw new Error("Method not implemented.");
+        try {
+            const blockedUser = await BlockUserModel.deleteOne({
+                blockerUserId,
+                blockedUserId
+            });
+
+            if (blockedUser.deletedCount === 0) {
+                throw new ClientError(
+                    "User not blocked.",
+                    HttpStatusCode.NOT_FOUND
+                );
+            }
+            return true;
+        } catch (error: any) {
+            if (error instanceof ClientError) {
+                throw error;
+            }
+            console.error(`Error unblocking user: `, error);
+            throw new ServerError("Failed to unblock user");
+        }
     }
     async isBlocked(
         blockerUserId: string,

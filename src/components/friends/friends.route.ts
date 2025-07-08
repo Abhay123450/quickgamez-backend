@@ -56,7 +56,11 @@ router
         validateBlockUserReq(),
         catchAsycError(friendsController.blockUser.bind(friendsController))
     )
-    .delete();
+    .delete(
+        authenticateUser,
+        validateBlockUserReq(),
+        catchAsycError(friendsController.unblockUser.bind(friendsController))
+    );
 router.route("/friends/unfriend/:friendUserId").post();
 router
     .route("/friends")
