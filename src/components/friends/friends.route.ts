@@ -5,6 +5,7 @@ import {
     validateBlockUserReq,
     validateGetFriendRequestsReq,
     validateGetFriendsReq,
+    validateRemoveFriendReq,
     validateSendFriendRequestReq
 } from "./friends.validate.js";
 import { FriendsRepositoryImpl } from "./FriendsRepositoryImpl.js";
@@ -61,7 +62,13 @@ router
         validateBlockUserReq(),
         catchAsycError(friendsController.unblockUser.bind(friendsController))
     );
-router.route("/friends/unfriend/:friendUserId").post();
+router
+    .route("/friends/unfriend/:friendUserId")
+    .put(
+        authenticateUser,
+        validateRemoveFriendReq(),
+        catchAsycError(friendsController.removeFriend.bind(friendsController))
+    );
 router
     .route("/friends")
     .get(

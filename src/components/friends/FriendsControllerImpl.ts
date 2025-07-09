@@ -113,7 +113,24 @@ export class FriendsControllerImpl implements FriendController {
         sendResponseSuccess(res, "User unblocked successfully");
     }
     async removeFriend(req: Request, res: Response, next: NextFunction) {
-        throw new Error("Method not implemented.");
+        const errors = validationResult(req);
+        const errorMessages = errors.array().map((error) => error.msg);
+        if (!errors.isEmpty()) {
+            throw new ValidationError(errorMessages);
+        }
+        const { userId } = req.user;
+        if (!userId) {
+            throw new ValidationError(["Login Required."]);
+        }
+        const { friendUserId } = matchedData(req);
+        const friendRemoved = await this._friendsService.removeFriend(
+            userId,
+            friendUserId
+        );
+        if (!friendRemoved) {
+            throw new ServerError("Failed to remove friend");
+        }
+        sendResponseSuccess(res, "Friend removed successfully");
     }
     async getMyFriends(req: Request, res: Response, next: NextFunction) {
         const errors = validationResult(req);

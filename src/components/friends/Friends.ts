@@ -22,7 +22,12 @@ export interface Friendship {
     }[];
 }
 
-export const friendshipStatus = ["pending", "accepted", "rejected"] as const;
+export const friendshipStatus = [
+    "pending",
+    "accepted",
+    "rejected",
+    "removed"
+] as const;
 
 export type FriendshipStatus = (typeof friendshipStatus)[number];
 
@@ -31,6 +36,7 @@ export type FriendRequest = {
     friendshipId: Friendship["id"];
     from: Pick<User, "userId" | "username" | "name" | "avatar">;
     createdAt: Date;
+    status: FriendshipStatus;
 };
 
 /** friend */

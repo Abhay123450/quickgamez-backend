@@ -75,3 +75,13 @@ export const validateBlockUserReq = () => [
         .isMongoId()
         .withMessage("Invalid blockedUserId.")
 ];
+
+export const validateRemoveFriendReq = () => [
+    param("friendUserId")
+        .exists()
+        .withMessage("friendUserId is required.")
+        .trim()
+        .escape()
+        .isMongoId()
+        .withMessage("Invalid friendUserId.")
+];

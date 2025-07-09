@@ -165,7 +165,20 @@ export class FriendsRepositoryImpl implements FriendsRepository {
         userId: User["userId"],
         friendId: User["userId"]
     ): Promise<boolean> {
-        throw new Error("Method not implemented.");
+        const removed = await FriendModel.findOneAndUpdate(
+            {
+                $or: [
+                    { userAId: userId, userBId: friendId },
+                    { userAId: friendId, userBId: userId }
+                ],
+                status: "accepted"
+            },
+            { status: "removed" }
+        );
+        if (!removed) {
+            throw new ClientError("Friend not found", 404);
+        }
+        return true;
     }
 
     private _convertToFriendRequest(
@@ -179,7 +192,8 @@ export class FriendsRepositoryImpl implements FriendsRepository {
                 name: friendship.userAId.name,
                 avatar: friendship.userAId.avatar
             },
-            createdAt: friendship.createdAt
+            createdAt: friendship.createdAt,
+            status: friendship.status
         };
     }
 }
