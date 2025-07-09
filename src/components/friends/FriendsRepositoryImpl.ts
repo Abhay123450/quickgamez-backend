@@ -173,7 +173,17 @@ export class FriendsRepositoryImpl implements FriendsRepository {
                 ],
                 status: "accepted"
             },
-            { status: "removed" }
+            {
+                status: "removed",
+                friendSince: null,
+                $push: {
+                    events: {
+                        status: "removed",
+                        user: userId,
+                        description: "user removed friend"
+                    }
+                }
+            }
         );
         if (!removed) {
             throw new ClientError("Friend not found", 404);
