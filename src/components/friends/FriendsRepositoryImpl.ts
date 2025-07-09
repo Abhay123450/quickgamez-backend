@@ -104,7 +104,16 @@ export class FriendsRepositoryImpl implements FriendsRepository {
                 _id: friendshipId,
                 userBId: userId
             },
-            { status: "rejected" }
+            {
+                status: "rejected",
+                $push: {
+                    events: {
+                        status: "rejected",
+                        user: userId,
+                        description: "user rejected friend request"
+                    }
+                }
+            }
         );
         if (!rejected) {
             throw new ClientError("Friend request not found", 404);
