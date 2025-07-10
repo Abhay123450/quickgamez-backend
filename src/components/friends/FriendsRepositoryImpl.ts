@@ -10,6 +10,7 @@ import {
 import { FreindsDocument, FriendModel } from "./friends.model.js";
 import { FriendsRepository } from "./FriendsRepository.js";
 import { ClientError, ServerError } from "../../utils/AppErrors.js";
+import { HttpStatusCode } from "../../constants/httpStatusCode.enum.js";
 
 type PopulatedFriendship = Omit<FreindsDocument, "userAId" | "userBId"> & {
     userAId: Pick<User, "username" | "name" | "avatar"> & {
@@ -26,7 +27,13 @@ export class FriendsRepositoryImpl implements FriendsRepository {
         userId: User["userId"],
         friendId: User["userId"]
     ): Promise<boolean> {
-        try {
+        const friendshipExists: any = await FriendModel.findOne({
+            $or: [
+                { userAId: userId, userBId: friendId },
+                { userAId: friendId, userBId: userId }
+            ]
+        });
+        if (!friendshipExists) {
             const friendship = new FriendModel({
                 userAId: userId,
                 userBId: friendId,
@@ -45,13 +52,40 @@ export class FriendsRepositoryImpl implements FriendsRepository {
                 throw new Error("Failed to add friend");
             }
             return true;
-        } catch (error: any) {
-            if (error.code === 11000) {
-                return true;
-            }
-            console.error(`Error adding friend: ${JSON.stringify(error)}`);
-            throw new ServerError("Failed to add friend");
         }
+
+        if (friendshipExists.status === "accepted") {
+            throw new ClientError(
+                "You are already friends",
+                HttpStatusCode.CONFLICT
+            );
+        }
+
+        if (friendshipExists.status === "pending") {
+            throw new ClientError(
+                "Friend request already sent",
+                HttpStatusCode.CONFLICT
+            );
+        }
+
+        // friend request is either "rejected" or "removed"
+
+        friendshipExists.status = "pending";
+        friendshipExists.events.push({
+            createdAt: new Date(),
+            user: userId,
+            status: "pending",
+            description: `${
+                friendshipExists.userAId.toString() === userId
+                    ? "userA"
+                    : "userB"
+            } sent a friend request`
+        });
+        const friendshipSaved = await friendshipExists.save();
+        if (!friendshipSaved) {
+            throw new ServerError("Failed to send friend request");
+        }
+        return true;
     }
     async getFriendRequests(
         userId: User["userId"],
