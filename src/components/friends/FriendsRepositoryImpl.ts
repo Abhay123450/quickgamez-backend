@@ -114,15 +114,22 @@ export class FriendsRepositoryImpl implements FriendsRepository {
         status: FriendshipStatus
     ) {
         const updateBody: Partial<FreindsDocument> = { status };
+        let event: Partial<FreindsDocument["events"][0]> = {};
         if (status === "accepted") {
             updateBody.friendSince = new Date();
+            event = {
+                createdAt: new Date(),
+                user: userId,
+                status: "accepted",
+                description: "user accepted friend request"
+            };
         }
         const accepted = await FriendModel.findByIdAndUpdate(
             {
                 _id: friendshipId,
                 userBId: userId
             },
-            updateBody
+            { $set: updateBody, $push: { events: event } }
         );
         if (!accepted) {
             throw new ClientError("Friend request not found", 404);
