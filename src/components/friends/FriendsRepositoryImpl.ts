@@ -137,8 +137,8 @@ export class FriendsRepositoryImpl implements FriendsRepository {
         return true;
     }
     async rejectFriendRequest(
-        friendshipId: Friendship["id"],
-        userId: User["userId"]
+        userId: User["userId"],
+        friendshipId: Friendship["id"]
     ): Promise<boolean> {
         const rejected: any = await FriendModel.findByIdAndUpdate(
             {

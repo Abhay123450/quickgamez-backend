@@ -5,6 +5,7 @@ import {
     validateBlockUserReq,
     validateGetFriendRequestsReq,
     validateGetFriendsReq,
+    validateRejectFriendRequestReq,
     validateRemoveFriendReq,
     validateSendFriendRequestReq
 } from "./friends.validate.js";
@@ -32,7 +33,15 @@ router
             friendsController.acceptFriendRequest.bind(friendsController)
         )
     );
-router.route("/friends/requests/:requestId/reject").put();
+router
+    .route("/friends/requests/:requestId/reject")
+    .put(
+        authenticateUser,
+        validateRejectFriendRequestReq(),
+        catchAsycError(
+            friendsController.rejectFriendRequest.bind(friendsController)
+        )
+    );
 router.route("/friends/requests/:requestId").delete();
 router
     .route("/friends/requests")

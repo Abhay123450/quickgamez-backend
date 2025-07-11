@@ -22,6 +22,10 @@ export interface FriendsRepository {
         userId: User["userId"],
         status: FriendshipStatus
     ) => Promise<boolean>;
+    rejectFriendRequest: (
+        userId: User["userId"],
+        friendshipId: Friendship["id"]
+    ) => Promise<boolean>;
     getFriends: (
         userId: User["userId"],
         page: number,

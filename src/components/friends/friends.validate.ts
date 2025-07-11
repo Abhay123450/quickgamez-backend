@@ -38,6 +38,16 @@ export const validateAcceptFriendRequestReq = () => [
         .withMessage("Invalid requestId.")
 ];
 
+export const validateRejectFriendRequestReq = () => [
+    param("requestId")
+        .exists()
+        .withMessage("requestId is required.")
+        .trim()
+        .escape()
+        .isMongoId()
+        .withMessage("Invalid requestId.")
+];
+
 export const validateGetFriendsReq = () => [
     query("page")
         .exists()

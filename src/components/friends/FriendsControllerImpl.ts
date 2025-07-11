@@ -70,7 +70,22 @@ export class FriendsControllerImpl implements FriendController {
         sendResponseSuccess(res, "Friend request accepted successfully");
     }
     async rejectFriendRequest(req: Request, res: Response, next: NextFunction) {
-        throw new Error("Method not implemented.");
+        const errors = validationResult(req);
+        const errorMessages = errors.array().map((error) => error.msg);
+        if (!errors.isEmpty()) {
+            throw new ValidationError(errorMessages);
+        }
+        const { userId } = req.user;
+        if (!userId) {
+            throw new ValidationError(["Login Required."]);
+        }
+        const { requestId } = matchedData(req);
+        const friendRequestRejected =
+            await this._friendsService.rejectFriendRequest(userId, requestId);
+        if (!friendRequestRejected) {
+            throw new ServerError("Failed to reject friend request");
+        }
+        sendResponseSuccess(res, "Friend request rejected successfully");
     }
     async blockUser(req: Request, res: Response, next: NextFunction) {
         const errors = validationResult(req);

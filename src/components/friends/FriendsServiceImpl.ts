@@ -46,9 +46,13 @@ export class FriendsServiceImpl implements FriendsService {
         );
     }
     async rejectFriendRequest(
+        userId: User["userId"],
         friendshipId: Friendship["id"]
     ): Promise<boolean> {
-        throw new Error("Method not implemented.");
+        return await this._friendsRepository.rejectFriendRequest(
+            userId,
+            friendshipId
+        );
     }
     async cancelFriendRequest(
         friendshipId: Friendship["id"]
