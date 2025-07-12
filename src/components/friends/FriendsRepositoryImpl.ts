@@ -1,18 +1,15 @@
 import { Schema } from "mongoose";
 import { User } from "../users/User.js";
-import {
-    Friend,
-    FriendRequest,
-    Friendship,
-    FriendshipStatus,
-    FriendsSort
-} from "./Friends.js";
+import { Friend, FriendRequest, Friendship, FriendsSort } from "./Friends.js";
 import { FreindsDocument, FriendModel } from "./friends.model.js";
 import { FriendsRepository } from "./FriendsRepository.js";
 import { ClientError, ServerError } from "../../utils/AppErrors.js";
 import { HttpStatusCode } from "../../constants/httpStatusCode.enum.js";
 
 type PopulatedFriendship = Omit<FreindsDocument, "userAId" | "userBId"> & {
+    requestByUserId: Pick<User, "username" | "name" | "avatar"> & {
+        _id: Schema.Types.ObjectId;
+    };
     userAId: Pick<User, "username" | "name" | "avatar"> & {
         _id: Schema.Types.ObjectId;
     };
@@ -37,13 +34,14 @@ export class FriendsRepositoryImpl implements FriendsRepository {
             const friendship = new FriendModel({
                 userAId: userId,
                 userBId: friendId,
+                requestByUserId: userId,
                 status: "pending",
                 events: [
                     {
                         createdAt: new Date(),
                         user: userId,
                         status: "pending",
-                        description: "userA sent a friend request"
+                        description: "user sent a friend request"
                     }
                 ]
             });
@@ -71,15 +69,12 @@ export class FriendsRepositoryImpl implements FriendsRepository {
         // friend request is either "rejected" or "removed"
 
         friendshipExists.status = "pending";
+        friendshipExists.requestByUserId = userId;
         friendshipExists.events.push({
             createdAt: new Date(),
             user: userId,
             status: "pending",
-            description: `${
-                friendshipExists.userAId.toString() === userId
-                    ? "userA"
-                    : "userB"
-            } sent a friend request`
+            description: `user sent a friend request`
         });
         const friendshipSaved = await friendshipExists.save();
         if (!friendshipSaved) {
@@ -93,13 +88,14 @@ export class FriendsRepositoryImpl implements FriendsRepository {
         limit: number
     ): Promise<FriendRequest[]> {
         const friendRequests = await FriendModel.find({
-            userBId: userId,
+            $or: [{ userAId: userId }, { userBId: userId }],
+            requestByUserId: { $ne: userId },
             status: "pending"
         })
             .skip((page - 1) * limit)
             .limit(limit)
             .populate<Pick<User, "userId" | "username" | "name" | "avatar">>(
-                "userAId",
+                "requestByUserId",
                 "userId username name avatar"
             );
         return friendRequests.map((friendship) =>
@@ -108,31 +104,34 @@ export class FriendsRepositoryImpl implements FriendsRepository {
             )
         );
     }
-    async updateFriendRequestStatus(
-        friendshipId: Friendship["id"],
+    async acceptFriendRequest(
         userId: User["userId"],
-        status: FriendshipStatus
+        friendshipId: Friendship["id"]
     ) {
-        const updateBody: Partial<FreindsDocument> = { status };
-        let event: Partial<FreindsDocument["events"][0]> = {};
-        if (status === "accepted") {
-            updateBody.friendSince = new Date();
-            event = {
-                createdAt: new Date(),
-                user: userId,
-                status: "accepted",
-                description: "user accepted friend request"
-            };
-        }
-        const accepted = await FriendModel.findByIdAndUpdate(
+        const accepted: any = await FriendModel.findOneAndUpdate(
             {
                 _id: friendshipId,
-                userBId: userId
+                $or: [{ userAId: userId }, { userBId: userId }],
+                requestByUserId: { $ne: userId },
+                status: "pending"
             },
-            { $set: updateBody, $push: { events: event } }
+            {
+                status: "accepted",
+                friendSince: new Date(),
+                $push: {
+                    events: {
+                        status: "accepted",
+                        user: userId,
+                        description: "user accepted friend request"
+                    }
+                }
+            }
         );
         if (!accepted) {
-            throw new ClientError("Friend request not found", 404);
+            throw new ClientError(
+                "Friend request not found. Maybe you have accepted it already.",
+                404
+            );
         }
         return true;
     }
@@ -140,13 +139,16 @@ export class FriendsRepositoryImpl implements FriendsRepository {
         userId: User["userId"],
         friendshipId: Friendship["id"]
     ): Promise<boolean> {
-        const rejected: any = await FriendModel.findByIdAndUpdate(
+        const rejected: any = await FriendModel.findOneAndUpdate(
             {
                 _id: friendshipId,
-                userBId: userId
+                $or: [{ userAId: userId }, { userBId: userId }],
+                requestByUserId: { $ne: userId },
+                status: "pending"
             },
             {
                 status: "rejected",
+                friendSince: null,
                 $push: {
                     events: {
                         status: "rejected",
@@ -247,10 +249,10 @@ export class FriendsRepositoryImpl implements FriendsRepository {
         return {
             friendshipId: friendship.id,
             from: {
-                userId: friendship.userAId._id.toString(),
-                username: friendship.userAId.username,
-                name: friendship.userAId.name,
-                avatar: friendship.userAId.avatar
+                userId: friendship.requestByUserId._id.toString(),
+                username: friendship.requestByUserId.username,
+                name: friendship.requestByUserId.name,
+                avatar: friendship.requestByUserId.avatar
             },
             createdAt: friendship.createdAt,
             status: friendship.status

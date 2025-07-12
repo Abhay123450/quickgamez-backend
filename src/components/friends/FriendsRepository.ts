@@ -17,10 +17,9 @@ export interface FriendsRepository {
         page: number,
         limit: number
     ) => Promise<FriendRequest[]>;
-    updateFriendRequestStatus: (
-        friendshipId: Friendship["id"],
+    acceptFriendRequest: (
         userId: User["userId"],
-        status: FriendshipStatus
+        friendshipId: Friendship["id"]
     ) => Promise<boolean>;
     rejectFriendRequest: (
         userId: User["userId"],

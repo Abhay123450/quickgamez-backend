@@ -3,10 +3,10 @@ import { User } from "../users/User.js";
 /** friendship (how it looks in the database) */
 export interface Friendship {
     id: string;
-    /*** user who send the friend request */
     userAId: User["userId"];
-    /** user who recieves the friend request */
     userBId: User["userId"];
+    /** user who send the friend request */
+    requestByUserId: User["userId"];
     createdAt: Date;
     updatedAt: Date;
     status: FriendshipStatus;
