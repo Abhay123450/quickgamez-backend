@@ -39,10 +39,9 @@ export class FriendsServiceImpl implements FriendsService {
         userId: User["userId"],
         friendshipId: Friendship["id"]
     ): Promise<boolean> {
-        return await this._friendsRepository.updateFriendRequestStatus(
-            friendshipId,
+        return await this._friendsRepository.acceptFriendRequest(
             userId,
-            "accepted"
+            friendshipId
         );
     }
     async rejectFriendRequest(

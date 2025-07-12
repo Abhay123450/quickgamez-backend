@@ -2,10 +2,11 @@ import { Document, model, Schema } from "mongoose";
 import { Friendship, friendshipStatus } from "./Friends.js";
 
 export interface FreindsDocument
-    extends Omit<Friendship, "userAId" | "userBId" | "id">,
+    extends Omit<Friendship, "userAId" | "userBId" | "requestByUserId" | "id">,
         Document {
     userAId: Schema.Types.ObjectId;
     userBId: Schema.Types.ObjectId;
+    requestByUserId: Schema.Types.ObjectId;
 }
 
 const friendsSchema = new Schema<FreindsDocument>(
@@ -16,6 +17,11 @@ const friendsSchema = new Schema<FreindsDocument>(
             required: true
         },
         userBId: {
+            type: Schema.Types.ObjectId,
+            ref: "User",
+            required: true
+        },
+        requestByUserId: {
             type: Schema.Types.ObjectId,
             ref: "User",
             required: true
