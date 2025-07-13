@@ -8,8 +8,7 @@
         "build": "rimraf dist && npx tsc",
         "gcp-build": "",
         "start": "node dist/app.js",
-        "predev": "npm run build",
-        "dev": "concurrently \"tsc -w\" \"nodemon dist/app.js\""
+        "dev": "nodemon"
     },
     "author": "",
     "license": "ISC",

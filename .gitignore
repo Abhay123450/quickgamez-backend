@@ -4,5 +4,8 @@ dist/
 help.txt
 src/public/*
 
-*.json
 saveMoviesToDB.ts
+
+# ignore all .json files except nodemon.json 
+*.json 
+!nodemon.json
