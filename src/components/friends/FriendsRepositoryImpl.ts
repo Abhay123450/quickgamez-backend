@@ -163,6 +163,35 @@ export class FriendsRepositoryImpl implements FriendsRepository {
         }
         return true;
     }
+
+    async cancelFriendRequest(
+        userId: User["userId"],
+        friendshipId: Friendship["id"]
+    ): Promise<boolean> {
+        const cancelled = await FriendModel.findOneAndUpdate(
+            {
+                _id: friendshipId,
+                requestByUserId: userId,
+                status: "pending"
+            },
+            {
+                status: "pending",
+                friendSince: null,
+                $push: {
+                    events: {
+                        status: "cancelled",
+                        user: userId,
+                        description: "user cancelled friend request"
+                    }
+                }
+            }
+        );
+        if (!cancelled) {
+            throw new ClientError("Friend request not found", 404);
+        }
+        return true;
+    }
+
     async getFriends(
         userId: User["userId"],
         page: number,

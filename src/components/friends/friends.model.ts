@@ -45,7 +45,7 @@ const friendsSchema = new Schema<FreindsDocument>(
                 },
                 status: {
                     type: String,
-                    enum: friendshipStatus,
+                    enum: [...friendshipStatus, "cancelled"],
                     required: true
                 },
                 user: {

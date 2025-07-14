@@ -25,6 +25,10 @@ export interface FriendsRepository {
         userId: User["userId"],
         friendshipId: Friendship["id"]
     ) => Promise<boolean>;
+    cancelFriendRequest: (
+        userId: User["userId"],
+        friendshipId: Friendship["id"]
+    ) => Promise<boolean>;
     getFriends: (
         userId: User["userId"],
         page: number,

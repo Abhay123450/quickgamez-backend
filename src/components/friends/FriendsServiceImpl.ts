@@ -54,9 +54,13 @@ export class FriendsServiceImpl implements FriendsService {
         );
     }
     async cancelFriendRequest(
+        userId: User["userId"],
         friendshipId: Friendship["id"]
     ): Promise<boolean> {
-        throw new Error("Method not implemented.");
+        return await this._friendsRepository.cancelFriendRequest(
+            userId,
+            friendshipId
+        );
     }
     async removeFriend(
         userId: User["userId"],
