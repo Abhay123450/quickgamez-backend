@@ -3,6 +3,7 @@ import { authenticateUser } from "../../middlewares/userAuth.middleware.js";
 import {
     validateAcceptFriendRequestReq,
     validateBlockUserReq,
+    validateCancelFriendRequestReq,
     validateGetFriendRequestsReq,
     validateGetFriendsReq,
     validateRejectFriendRequestReq,
@@ -42,7 +43,15 @@ router
             friendsController.rejectFriendRequest.bind(friendsController)
         )
     );
-router.route("/friends/requests/:requestId").delete();
+router
+    .route("/friends/requests/:requestId/cancel")
+    .put(
+        authenticateUser,
+        validateCancelFriendRequestReq(),
+        catchAsycError(
+            friendsController.cancelFriendRequest.bind(friendsController)
+        )
+    );
 router
     .route("/friends/requests")
     .post(
