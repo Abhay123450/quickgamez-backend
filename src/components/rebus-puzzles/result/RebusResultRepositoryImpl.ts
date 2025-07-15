@@ -2,7 +2,7 @@ import {
     NewRebusPuzzleResult,
     RebusPuzzleResult
 } from "./RebusPuzzleResult.js";
-import { RebusResultDocument, RebusResultModel } from "./rebusResult.model.js";
+import { RebusResultModel } from "./rebusResult.model.js";
 import { RebusResultRepository } from "./RebusResultRepository.js";
 
 export class RebusResultrepositoryImpl implements RebusResultRepository {

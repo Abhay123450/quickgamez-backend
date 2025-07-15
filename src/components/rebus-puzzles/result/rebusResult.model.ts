@@ -1,8 +1,5 @@
 import { Document, model, Schema } from "mongoose";
-import {
-    NewRebusPuzzleResult,
-    RebusPuzzleResult
-} from "./RebusPuzzleResult.js";
+import { NewRebusPuzzleResult } from "./RebusPuzzleResult.js";
 import { Difficulty } from "../../../constants/Difficulty.js";
 
 export interface RebusResultDocument

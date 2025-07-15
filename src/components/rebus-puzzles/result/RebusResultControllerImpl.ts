@@ -6,7 +6,6 @@ import { ServerError, ValidationError } from "../../../utils/AppErrors.js";
 import { RebusResultService } from "./RebusResultService.js";
 import { sendResponseSuccess } from "../../../utils/sendResponse.js";
 import { HttpStatusCode } from "../../../constants/httpStatusCode.enum.js";
-import { ConsoleLog } from "../../../utils/ConsoleLog.js";
 
 export class RebusResultControllerImpl implements RebusResultController {
     private _rebusResultService: RebusResultService;

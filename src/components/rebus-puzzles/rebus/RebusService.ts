@@ -1,4 +1,3 @@
-import { Difficulty } from "../../../constants/Difficulty.js";
 import { User } from "../../users/User.js";
 import { NewRebus, Rebus } from "./Rebus.js";
 

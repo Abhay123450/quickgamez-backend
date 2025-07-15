@@ -1,6 +1,5 @@
 import { ClientError } from "../../../utils/AppErrors.js";
 import { User } from "../../users/User.js";
-import { RebusResultRepository } from "../result/RebusResultRepository.js";
 import { Rebus } from "./Rebus.js";
 import { RebusModel } from "./rebus.model.js";
 import { RebusRepository } from "./RebusRepository.js";

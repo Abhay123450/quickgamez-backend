@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from "express";
 import { RebusController } from "./RebusController.js";
-import { ConsoleLog } from "../../../utils/ConsoleLog.js";
 import { matchedData, validationResult } from "express-validator";
 import {
     ClientError,

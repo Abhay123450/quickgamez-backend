@@ -1,6 +1,5 @@
 import { body, param, query } from "express-validator";
 import { Difficulty } from "../../../constants/Difficulty.js";
-import { set } from "mongoose";
 
 export const validateAddRebusReq = () => [
     body("rebusImage").custom(async (value, { req }) => {

@@ -10,10 +10,7 @@ import {
 } from "./rebus.validate.js";
 import { RebusServiceImpl } from "./RebusServiceImpl.js";
 import { FileUploadSerivceImpl } from "../../file-upload/FileUploadServiceImpl.js";
-import {
-    authenticateUser,
-    isUserAuthenticated
-} from "../../../middlewares/userAuth.middleware.js";
+import { authenticateUser } from "../../../middlewares/userAuth.middleware.js";
 import { RebusRepositoryImpl } from "./RebusRepositoryImpl.js";
 import { rebusResultRouter } from "../result/rebusResult.route.js";
 import { leaderboardRouter } from "../leaderboard/leaderboard.route.js";
