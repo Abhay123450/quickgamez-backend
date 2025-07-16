@@ -1,16 +1,9 @@
 import { NextFunction, Request, Response } from "express";
-import { MovieRepository } from "./interfaces/MovieRepository.js";
 import { Industry, Movie } from "./interfaces/Movie.js";
-import {
-    sendResponseClientError,
-    sendResponseServerError,
-    sendResponseSuccess
-} from "../../../utils/sendResponse.js";
+import { sendResponseSuccess } from "../../../utils/sendResponse.js";
 import { HttpStatusCode } from "../../../constants/httpStatusCode.enum.js";
 import { matchedData, validationResult } from "express-validator";
 import { ConsoleLog } from "../../../utils/ConsoleLog.js";
-import { AppError } from "../../../utils/AppError.js";
-import { match } from "assert";
 import { MovieController } from "./interfaces/MovieController.js";
 import { MovieService } from "./interfaces/MovieService.js";
 import { Difficulty } from "../../../constants/Difficulty.js";
@@ -41,7 +34,7 @@ export class MovieControllerImpl implements MovieController {
         const movieSaved = await this._movieService.addMovie(movie);
 
         if (!movieSaved) {
-            throw new AppError("cannot save movie", 500);
+            throw new ServerError("Cannot save movie", 500);
         }
 
         sendResponseSuccess(
@@ -180,9 +173,7 @@ export class MovieControllerImpl implements MovieController {
         const movieDeleted = await this._movieService.deleteMovie(movieId);
 
         if (!movieDeleted) {
-            return next(
-                new AppError("An error occurred. Cannot delete movie.")
-            );
+            throw new ServerError("An error occurred. Cannot delete movie.");
         }
 
         sendResponseSuccess(res, "Movie deleted");
