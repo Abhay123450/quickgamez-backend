@@ -1,4 +1,4 @@
-import { GuessTheMovieResult, NewGuessTheMovieResult } from "./GTMResult.js";
+import { NewGuessTheMovieResult } from "./GTMResult.js";
 
 export interface GTMResultService {
     getGTMResult: () => Promise<void>;

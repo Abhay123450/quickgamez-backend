@@ -7,7 +7,6 @@ import { UserRepositoryImpl } from "../components/users/UserRepositoryImpl.js";
 import { UserAccountStatus } from "../constants/userAccountStatus.enum.js";
 import { HttpStatusCode } from "../constants/httpStatusCode.enum.js";
 import { TokenBlacklistModel } from "../components/users/auth/tokenBlacklist.model.js";
-import { ConsoleLog } from "../utils/ConsoleLog.js";
 import { AuthenticationError, AuthorizationError } from "../utils/AppErrors.js";
 import { ErrorCode } from "../constants/ErrorCode.enum.js";
 

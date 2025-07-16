@@ -4,7 +4,7 @@ import { sendResponseSuccess } from "../../../utils/sendResponse.js";
 import { matchedData, validationResult } from "express-validator";
 import { ServerError, ValidationError } from "../../../utils/AppErrors.js";
 import { GTMResultService } from "./GTMResultService.js";
-import { GuessTheMovieResult, NewGuessTheMovieResult } from "./GTMResult.js";
+import { NewGuessTheMovieResult } from "./GTMResult.js";
 
 export class GTMResultControllerImpl implements GTMResultController {
     _gtmResultService: GTMResultService;

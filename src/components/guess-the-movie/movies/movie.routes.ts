@@ -10,12 +10,8 @@ import {
     validateGetRandomMovieReq,
     validateGetUnplayedMoviesReq
 } from "./movie.validate.js";
-import { query } from "express-validator";
 import { MovieServiceImpl } from "./MovieServiceImpl.js";
-import {
-    authenticateUser,
-    isUserAuthenticated
-} from "../../../middlewares/userAuth.middleware.js";
+import { isUserAuthenticated } from "../../../middlewares/userAuth.middleware.js";
 
 const movieRepository = new MovieRepositoryImpl();
 const movieService = new MovieServiceImpl(movieRepository);

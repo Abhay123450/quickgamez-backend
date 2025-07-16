@@ -1,9 +1,5 @@
 import { Difficulty } from "../../../constants/Difficulty.js";
-import {
-    GuessTheMovieGuesses,
-    GuessTheMovieResult,
-    NewGuessTheMovieResult
-} from "./GTMResult.js";
+import { GuessTheMovieGuesses, NewGuessTheMovieResult } from "./GTMResult.js";
 import { GTMResultRepository } from "./GTMResultRepository.js";
 import { GTMResultService } from "./GTMResultService.js";
 
