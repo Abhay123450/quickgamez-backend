@@ -1,5 +1,5 @@
 import { Document, Schema, model } from "mongoose";
-import { Movie } from "./interfaces/Movie.js";
+import { Movie } from "./Movie.js";
 import { Difficulty } from "../../../constants/Difficulty.js";
 
 export interface MovieDocument extends Omit<Movie, "id">, Document {

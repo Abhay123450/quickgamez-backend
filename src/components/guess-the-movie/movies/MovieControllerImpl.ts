@@ -1,11 +1,11 @@
 import { NextFunction, Request, Response } from "express";
-import { Industry, Movie } from "./interfaces/Movie.js";
+import { Industry, Movie } from "./Movie.js";
 import { sendResponseSuccess } from "../../../utils/sendResponse.js";
 import { HttpStatusCode } from "../../../constants/httpStatusCode.enum.js";
 import { matchedData, validationResult } from "express-validator";
 import { ConsoleLog } from "../../../utils/ConsoleLog.js";
-import { MovieController } from "./interfaces/MovieController.js";
-import { MovieService } from "./interfaces/MovieService.js";
+import { MovieController } from "./MovieController.js";
+import { MovieService } from "./MovieService.js";
 import { Difficulty } from "../../../constants/Difficulty.js";
 import {
     ClientError,

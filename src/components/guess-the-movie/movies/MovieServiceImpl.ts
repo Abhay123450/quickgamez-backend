@@ -1,9 +1,9 @@
 import { Difficulty } from "../../../constants/Difficulty.js";
 import { ClientError } from "../../../utils/AppErrors.js";
 import { User } from "../../users/User.js";
-import { Industry, Movie } from "./interfaces/Movie.js";
-import { MovieRepository } from "./interfaces/MovieRepository.js";
-import { MovieService } from "./interfaces/MovieService.js";
+import { Industry, Movie } from "./Movie.js";
+import { MovieRepository } from "./MovieRepository.js";
+import { MovieService } from "./MovieService.js";
 
 export class MovieServiceImpl implements MovieService {
     _movieRepository: MovieRepository;

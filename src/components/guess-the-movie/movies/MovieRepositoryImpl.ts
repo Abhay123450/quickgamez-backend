@@ -1,6 +1,6 @@
 import { ObjectId, SortOrder, Types } from "mongoose";
-import { Industry, Movie } from "./interfaces/Movie.js";
-import { MovieRepository } from "./interfaces/MovieRepository.js";
+import { Industry, Movie } from "./Movie.js";
+import { MovieRepository } from "./MovieRepository.js";
 import { MovieModel } from "./movie.model.js";
 import { ConsoleLog } from "../../../utils/ConsoleLog.js";
 import { Difficulty } from "../../../constants/Difficulty.js";

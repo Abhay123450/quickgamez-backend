@@ -1,4 +1,4 @@
-import { Industry } from "../movies/interfaces/Movie.js";
+import { Industry } from "../movies/Movie.js";
 import { Leaderboard, Timerange } from "./Leaderboard.js";
 import { LeaderboardRepository } from "./LeaderboardRepository.js";
 import { LeaderboardService } from "./LeaderboardService.js";

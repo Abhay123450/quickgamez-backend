@@ -1,5 +1,5 @@
 import { Difficulty } from "../../../constants/Difficulty.js";
-import { Industry, Movie } from "../movies/interfaces/Movie.js";
+import { Industry, Movie } from "../movies/Movie.js";
 import { User } from "../../users/User.js";
 
 export interface NewGuessTheMovieResult {
