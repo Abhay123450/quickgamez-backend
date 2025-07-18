@@ -60,10 +60,10 @@ export class EmailServiceImpl implements EmailService {
                                 <tr>
                                     <td colspan="2" style="padding: 10px 0;">
                                     <a href="https://quickgamez.com/games/guess-the-movie/hollywood" style="text-decoration: none; color: #000; display: flex; align-items: center;">
-                                        <img src="https://quickgamez.com/images/thumbnail/guess-the-movie-hollywood.webp" alt="Guess The Movie - Hollywood" style="width: 20%; max-width: 150px; border-radius: 4px; margin-right: 10px;" />
+                                        <img src="https://quickgamez.com/_app/immutable/assets/guess-the-movie-hollywood-thumbnail-480.1PGK6aPT.webp" alt="Guess The Movie - Hollywood" style="width: 20%; max-width: 150px; border-radius: 4px; margin-right: 10px;" />
                                         <div style="width: 80%;">
-                                        <strong style="font-size: 16px;">Guess the movie - Hollywood</strong>
-                                        <p style="margin: 5px 0; font-size: 14px; color: #555;">Fast-paced arcade action with epic powerups.</p>
+                                        <strong style="font-size: 16px;">Guess The Movie - Hollywood</strong>
+                                        <p style="margin: 5px 0; font-size: 14px; color: #555;">Test your movie knowledge with this movie guessing game.</p>
                                         </div>
                                     </a>
                                     </td>
@@ -71,11 +71,23 @@ export class EmailServiceImpl implements EmailService {
                                 <!-- Item 2 -->
                                 <tr>
                                     <td colspan="2" style="padding: 10px 0;">
-                                    <a href="https://quickgamez.com/game/2" style="text-decoration: none; color: #000; display: flex; align-items: center;">
-                                        <img src="https://quickgamez.com/images/guess-the-movie-logo.webp" alt="Game 2" style="width: 20%; max-width: 150px; border-radius: 4px; margin-right: 10px;" />
+                                    <a href="https://quickgamez.com/games/guess-the-movie/bollywood" style="text-decoration: none; color: #000; display: flex; align-items: center;">
+                                        <img src="https://quickgamez.com/_app/immutable/assets/guess-the-movie-bollywood-thumbnail-480.DgZdzsVY.webp" alt="Guess The Movie - Hollywood" style="width: 20%; max-width: 150px; border-radius: 4px; margin-right: 10px;" />
                                         <div style="width: 80%;">
-                                        <strong style="font-size: 16px;">Puzzle Master</strong>
-                                        <p style="margin: 5px 0; font-size: 14px; color: #555;">Challenge your brain with clever puzzles.</p>
+                                        <strong style="font-size: 16px;">Guess The Movie - Bollywood</strong>
+                                        <p style="margin: 5px 0; font-size: 14px; color: #555;">Test your movie knowledge with this movie guessing game.</p>
+                                        </div>
+                                    </a>
+                                    </td>
+                                </tr>
+                                <!-- Item 3 -->
+                                <tr>
+                                    <td colspan="2" style="padding: 10px 0;">
+                                    <a href="https://quickgamez.com/geames/rebus-puzzles" style="text-decoration: none; color: #000; display: flex; align-items: center;">
+                                        <img src="https://quickgamez.com/_app/immutable/assets/rebus-puzzles-thumbnail-1080.BbKXUlcS.webp" alt="Game 2" style="width: 20%; max-width: 150px; border-radius: 4px; margin-right: 10px;" />
+                                        <div style="width: 80%;">
+                                        <strong style="font-size: 16px;">Rebus puzzles</strong>
+                                        <p style="margin: 5px 0; font-size: 14px; color: #555;">Challenge your brain with these fun and exciting rebus puzzles.</p>
                                         </div>
                                     </a>
                                     </td>
@@ -102,7 +114,8 @@ export class EmailServiceImpl implements EmailService {
                         </table>
                         </body>
                         </html>`;
-        // Will send the email when more content is avaialable
+
+        await this.sendEmail(to, "Welcome to QuickGamez", html, "");
     }
     async sendRegistrationOtpEmail(
         to: string,
