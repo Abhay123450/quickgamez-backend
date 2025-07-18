@@ -156,6 +156,8 @@ export class UserAuthServiceImpl implements UserAuthService {
                 payload: {}
             });
 
+            this._emailService.sendWelcomeEmail(newUser.email, newUser.name);
+
             userExists = newUser;
         }
 
