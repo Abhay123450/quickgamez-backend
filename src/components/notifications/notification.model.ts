@@ -1,5 +1,9 @@
 import { Document, model, Schema, Types } from "mongoose";
-import { Notification, NotificationActions } from "./Notification.js";
+import {
+    Notification,
+    NotificationActions,
+    notificationTypes
+} from "./Notification.js";
 
 export interface NotificationDocument
     extends Omit<Notification, "userId">,
@@ -33,7 +37,7 @@ export const notificationSchema = new Schema<NotificationDocument>(
         type: {
             type: String,
             required: true,
-            enum: ["normal", "important"],
+            enum: notificationTypes,
             default: "normal"
         }
     },
