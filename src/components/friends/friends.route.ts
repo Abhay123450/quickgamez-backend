@@ -15,13 +15,19 @@ import { FriendsServiceImpl } from "./FriendsServiceImpl.js";
 import { FriendsControllerImpl } from "./FriendsControllerImpl.js";
 import { catchAsycError } from "../../middlewares/catchAsyncError.js";
 import { BlockUserRepositoryImpl } from "./block-users/BlockUserRepositoryImpl.js";
+import { NotificationRepositoryImpl } from "../notifications/NotificationRepositoryImpl.js";
+import { NotificationServiceImpl } from "../notifications/NotificationServiceImpl.js";
 const router = Router();
 
 const friendsRepository = new FriendsRepositoryImpl();
 const blockedUsersRepository = new BlockUserRepositoryImpl();
+const notificationService = new NotificationServiceImpl(
+    new NotificationRepositoryImpl()
+);
 const friendsService = new FriendsServiceImpl(
     friendsRepository,
-    blockedUsersRepository
+    blockedUsersRepository,
+    notificationService
 );
 const friendsController = new FriendsControllerImpl(friendsService);
 

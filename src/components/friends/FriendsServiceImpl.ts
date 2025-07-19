@@ -1,19 +1,24 @@
-import { ClientError } from "../../utils/AppErrors.js";
+import { Server } from "http";
+import { ClientError, ServerError } from "../../utils/AppErrors.js";
 import { User } from "../users/User.js";
 import { BlockUserRepository } from "./block-users/BlockUserRepository.js";
 import { Friend, FriendRequest, Friendship, FriendsSort } from "./Friends.js";
 import { FriendsRepository } from "./FriendsRepository.js";
 import { FriendsService } from "./FriendsService.js";
+import { NotificationService } from "../notifications/NotificationService.js";
 
 export class FriendsServiceImpl implements FriendsService {
     private _friendsRepository: FriendsRepository;
     private _blockedUsersRepository: BlockUserRepository;
+    private _notificationService: NotificationService;
     constructor(
         friendsRepository: FriendsRepository,
-        blockedUsersRepository: BlockUserRepository
+        blockedUsersRepository: BlockUserRepository,
+        notificationService: NotificationService
     ) {
         this._friendsRepository = friendsRepository;
         this._blockedUsersRepository = blockedUsersRepository;
+        this._notificationService = notificationService;
     }
     async sendFriendRequest(
         from: User["userId"],
@@ -33,7 +38,21 @@ export class FriendsServiceImpl implements FriendsService {
                 "You cannot send a friend request to this user because you have blocked them."
             );
         }
-        return await this._friendsRepository.addFriend(from, to);
+        const isFriendRequestSent = await this._friendsRepository.addFriend(
+            from,
+            to
+        );
+        if (!isFriendRequestSent) {
+            throw new ServerError("Failed to send friend request");
+        }
+        this._notificationService.createNewNotification({
+            userId: to,
+            message: `${from} sent you a friend request.`,
+            action: "friend_request",
+            payload: { from },
+            type: "friend_request"
+        });
+        return true;
     }
     async acceptFriendRequest(
         userId: User["userId"],
