@@ -58,10 +58,19 @@ export class FriendsServiceImpl implements FriendsService {
         userId: User["userId"],
         friendId: User["userId"]
     ): Promise<boolean> {
-        return await this._friendsRepository.acceptFriendRequest(
-            userId,
-            friendId
-        );
+        const friendRequestAccepted =
+            await this._friendsRepository.acceptFriendRequest(userId, friendId);
+        if (!friendRequestAccepted) {
+            throw new ServerError("Failed to accept friend request");
+        }
+        this._notificationService.createNewNotification({
+            userId: friendId,
+            message: `${userId} accepted your friend request.`,
+            action: "show_friends",
+            payload: { from: userId },
+            type: "important"
+        });
+        return true;
     }
     async rejectFriendRequest(
         userId: User["userId"],

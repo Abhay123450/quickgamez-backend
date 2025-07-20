@@ -1,7 +1,8 @@
 export const NotificationActions = {
     OPEN_PROFILE: "open_profile",
     OPEN_COMMENT: "open_comment",
-    FRIEND_REQUEST: "friend_request"
+    FRIEND_REQUEST: "friend_request",
+    SHOW_FRIENDS: "show_friends"
 } as const;
 
 export const notificationTypes = [
