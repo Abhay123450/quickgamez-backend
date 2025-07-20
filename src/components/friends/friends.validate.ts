@@ -29,13 +29,13 @@ export const validateSendFriendRequestReq = () => [
 ];
 
 export const validateAcceptFriendRequestReq = () => [
-    param("requestId")
+    param("friendId")
         .exists()
-        .withMessage("requestId is required.")
+        .withMessage("friendId is required.")
         .trim()
         .escape()
         .isMongoId()
-        .withMessage("Invalid requestId.")
+        .withMessage("Invalid friendId.")
 ];
 
 export const validateRejectFriendRequestReq = () => [
