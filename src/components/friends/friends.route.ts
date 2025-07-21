@@ -32,7 +32,7 @@ const friendsService = new FriendsServiceImpl(
 const friendsController = new FriendsControllerImpl(friendsService);
 
 router
-    .route("/friends/requests/:requestId/accept")
+    .route("/friends/requests/:friendId/accept")
     .put(
         authenticateUser,
         validateAcceptFriendRequestReq(),
