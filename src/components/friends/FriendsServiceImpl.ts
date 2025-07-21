@@ -74,11 +74,11 @@ export class FriendsServiceImpl implements FriendsService {
     }
     async rejectFriendRequest(
         userId: User["userId"],
-        friendshipId: Friendship["id"]
+        friendId: User["userId"]
     ): Promise<boolean> {
         return await this._friendsRepository.rejectFriendRequest(
             userId,
-            friendshipId
+            friendId
         );
     }
     async cancelFriendRequest(

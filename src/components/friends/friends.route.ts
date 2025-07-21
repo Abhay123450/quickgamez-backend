@@ -41,7 +41,7 @@ router
         )
     );
 router
-    .route("/friends/requests/:requestId/reject")
+    .route("/friends/requests/:friendId/reject")
     .put(
         authenticateUser,
         validateRejectFriendRequestReq(),

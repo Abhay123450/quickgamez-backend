@@ -94,9 +94,9 @@ export class FriendsControllerImpl implements FriendController {
         if (!userId) {
             throw new ValidationError(["Login Required."]);
         }
-        const { requestId } = matchedData(req);
+        const { friendId } = matchedData(req);
         const friendRequestRejected =
-            await this._friendsService.rejectFriendRequest(userId, requestId);
+            await this._friendsService.rejectFriendRequest(userId, friendId);
         if (!friendRequestRejected) {
             throw new ServerError("Failed to reject friend request");
         }

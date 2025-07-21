@@ -12,7 +12,7 @@ export interface FriendsService {
     ) => Promise<boolean>;
     rejectFriendRequest: (
         userId: User["userId"],
-        friendshipId: Friendship["id"]
+        friendId: User["userId"]
     ) => Promise<boolean>;
     cancelFriendRequest: (
         userId: User["userId"],

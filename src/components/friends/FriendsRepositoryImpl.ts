@@ -139,12 +139,14 @@ export class FriendsRepositoryImpl implements FriendsRepository {
     }
     async rejectFriendRequest(
         userId: User["userId"],
-        friendshipId: Friendship["id"]
+        friendId: User["userId"]
     ): Promise<boolean> {
         const rejected: any = await FriendModel.findOneAndUpdate(
             {
-                _id: friendshipId,
-                $or: [{ userAId: userId }, { userBId: userId }],
+                $or: [
+                    { userAId: userId, userBId: friendId },
+                    { userAId: friendId, userBId: userId }
+                ],
                 requestByUserId: { $ne: userId },
                 status: "pending"
             },
