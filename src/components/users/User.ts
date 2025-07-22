@@ -27,6 +27,7 @@ export interface UserDetails {
     createdAt: Date;
     avatar?: string;
     profileImage?: string | null;
+    bio?: string | null;
 }
 export interface User extends UserDetails, UserAuth {
     userId: string;

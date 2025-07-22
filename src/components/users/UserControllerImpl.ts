@@ -111,7 +111,7 @@ export class UserControllerImpl implements UserController {
         if (!errors.isEmpty()) {
             throw new ValidationError(errorMessages);
         }
-        const { userId, name, username, avatar } = matchedData(req);
+        const { userId, name, username, avatar, bio } = matchedData(req);
 
         ConsoleLog.info(`userId is ${userId}`);
         ConsoleLog.info(`user is ${req.user.userId}`);
@@ -122,7 +122,7 @@ export class UserControllerImpl implements UserController {
             );
         }
 
-        if (!name && !username && !avatar) {
+        if (!name && !username && !avatar && !bio) {
             throw new ValidationError(["Atleast one field is required"]);
         }
         const updateBody: Partial<User> = {};
@@ -134,6 +134,9 @@ export class UserControllerImpl implements UserController {
         }
         if (avatar && avatar !== "") {
             updateBody.avatar = avatar;
+        }
+        if (bio && bio !== "") {
+            updateBody.bio = bio;
         }
         ConsoleLog.info(`updateBody is ${JSON.stringify(updateBody)}`);
         const userUpdated = await this.userService.updateUser(

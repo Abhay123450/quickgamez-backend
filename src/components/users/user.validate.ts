@@ -92,7 +92,12 @@ export const validateUpdateUserReq = () => [
                 .trim()
                 .escape()
                 .isLength({ min: 1 })
-                .withMessage("Avatar cannot be empty.")
+                .withMessage("Avatar cannot be empty."),
+            body("bio")
+                .trim()
+                .escape()
+                .isLength({ min: 1 })
+                .withMessage("Bio cannot be empty.")
         ],
         {
             message: "username or name is required."

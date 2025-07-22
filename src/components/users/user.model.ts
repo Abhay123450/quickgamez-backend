@@ -73,6 +73,11 @@ export const userSchema = new Schema<UserDocument>(
         },
         profileImage: {
             type: String
+        },
+        bio: {
+            type: String,
+            trim: true,
+            default: null
         }
     },
     {
