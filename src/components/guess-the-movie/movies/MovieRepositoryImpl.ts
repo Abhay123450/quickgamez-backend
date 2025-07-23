@@ -10,7 +10,6 @@ import { GTMResultModel } from "../result/gtmResult.model.js";
 export class MovieRepositoryImpl implements MovieRepository {
     async addMovies(movies: Movie[]): Promise<boolean> {
         const moviesSaved = await MovieModel.insertMany(movies);
-        console.log("===moviesSaved==\n", moviesSaved);
         if (!moviesSaved) {
             return false;
         }
@@ -47,7 +46,6 @@ export class MovieRepositoryImpl implements MovieRepository {
                 sortBy.createdAt = -1;
                 break;
         }
-        ConsoleLog.info(`Sort order ${JSON.stringify(sortBy)}`);
         const movies = await MovieModel.find(filter)
             .sort(sortBy)
             .skip((page - 1) * limit)
@@ -83,7 +81,6 @@ export class MovieRepositoryImpl implements MovieRepository {
             { $match: filter },
             { $sample: { size: limit } }
         ]);
-        // ConsoleLog.info(`Random Movie ${JSON.stringify(randomMovie)}`);
         randomMovies.forEach((movie) => {
             movie.id = movie._id;
             delete movie._id;
@@ -115,11 +112,6 @@ export class MovieRepositoryImpl implements MovieRepository {
         industry: Industry,
         count: number
     ): Promise<Movie[]> {
-        console.log(`userId ${userId}`);
-        console.log(`difficulty ${difficulty}`);
-        console.log(`industry ${industry}`);
-        console.log(`count ${count}`);
-
         const playedMovies = await GTMResultModel.find(
             {
                 userId: new Types.ObjectId(userId),
@@ -128,13 +120,11 @@ export class MovieRepositoryImpl implements MovieRepository {
             },
             "movieId"
         );
-        console.log(`playedMovies ${JSON.stringify(playedMovies)}`);
 
         const playedMovieIds: ObjectId[] = playedMovies.map(
             (movie) => movie.movieId
         );
 
-        console.log(`playedMovieIds ${JSON.stringify(playedMovieIds)}`);
         const unplayedMovies = await MovieModel.aggregate([
             {
                 $match: {
@@ -150,7 +140,6 @@ export class MovieRepositoryImpl implements MovieRepository {
             delete movie._id;
             delete movie.__v;
         });
-        console.log(`unplayedMovies ${JSON.stringify(unplayedMovies)}`);
         return unplayedMovies;
     }
 }
