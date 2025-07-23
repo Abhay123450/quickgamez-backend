@@ -47,7 +47,6 @@ export class LeaderboardRepositoryImpl implements LeaderboardRepository {
         }
 
         let cutoffDate = new Date(cutoffTime);
-        ConsoleLog.info(`cutoffDate: ${cutoffDate}`);
 
         const filter: any = {
             createdAt: { $gte: cutoffDate },
@@ -92,8 +91,6 @@ export class LeaderboardRepositoryImpl implements LeaderboardRepository {
                 $unwind: "$user"
             }
         ]);
-
-        ConsoleLog.info(`rankings for ${time}: ${JSON.stringify(rankings)}`);
 
         const leaderboard: Leaderboard = {
             game: "guess-the-movie",

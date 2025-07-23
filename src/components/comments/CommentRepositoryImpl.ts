@@ -309,7 +309,6 @@ export class CommentRepositoryImpl implements CommentRepository {
     private _convertCommentDocumentToComment(
         commentDocument: PopulatedComment
     ): Partial<Comment> {
-        ConsoleLog.info(JSON.stringify(commentDocument));
         const comment: Partial<Comment> = {};
         if (commentDocument._id)
             comment.commentId = commentDocument._id.toString();

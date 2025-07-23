@@ -66,8 +66,6 @@ export class CommentControllerImpl implements CommentController {
             req.user?.userId
         );
 
-        ConsoleLog.info(`comments are ${JSON.stringify(comments)}`);
-
         sendResponseSuccess(res, comments);
     }
     async deleteComment(

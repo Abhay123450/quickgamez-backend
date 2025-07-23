@@ -37,7 +37,6 @@ export class BlockUserRepositoryImpl implements BlockUserRepository {
                     HttpStatusCode.CONFLICT
                 );
             }
-            console.error(`Error blocking user: ${JSON.stringify(error)}`);
             throw new ServerError("Failed to block user");
         }
     }
@@ -62,7 +61,6 @@ export class BlockUserRepositoryImpl implements BlockUserRepository {
             if (error instanceof ClientError) {
                 throw error;
             }
-            console.error(`Error unblocking user: `, error);
             throw new ServerError("Failed to unblock user");
         }
     }
