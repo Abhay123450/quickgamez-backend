@@ -113,9 +113,6 @@ export class UserControllerImpl implements UserController {
         }
         const { userId, name, username, avatar, bio } = matchedData(req);
 
-        ConsoleLog.info(`userId is ${userId}`);
-        ConsoleLog.info(`user is ${req.user.userId}`);
-
         if (req.user.userId.toString() !== userId) {
             throw new AuthorizationError(
                 "You are not authorized to update this user"
@@ -138,7 +135,6 @@ export class UserControllerImpl implements UserController {
         if (bio && bio !== "") {
             updateBody.bio = bio;
         }
-        ConsoleLog.info(`updateBody is ${JSON.stringify(updateBody)}`);
         const userUpdated = await this.userService.updateUser(
             userId,
             updateBody
