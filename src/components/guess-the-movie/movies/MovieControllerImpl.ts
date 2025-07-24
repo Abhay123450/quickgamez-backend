@@ -29,8 +29,6 @@ export class MovieControllerImpl implements MovieController {
 
         const movie = matchedData(req) as Movie;
 
-        console.log(`movie is ${JSON.stringify(movie)}`);
-
         const movieSaved = await this._movieService.addMovie(movie);
 
         if (!movieSaved) {
@@ -71,7 +69,6 @@ export class MovieControllerImpl implements MovieController {
         }
 
         const movies = matchedData(req).movies as Movie[];
-        console.log(`movies is ${JSON.stringify(movies)}`);
         const moviesSaved = await this._movieService.addMovies(movies);
         if (!moviesSaved) {
             return next(new ServerError("cannot save movies"));

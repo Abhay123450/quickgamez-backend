@@ -27,7 +27,6 @@ export class GTMResultServiceImpl implements GTMResultService {
             result.movieNameUnguessed,
             result.guesses
         );
-        console.log(`score ${score}`);
 
         return this._gtmResultRepository.addGTMResult({ ...result, score });
     }
@@ -95,11 +94,7 @@ export class GTMResultServiceImpl implements GTMResultService {
                 0
             );
 
-        console.log(`numberOfCharactersToGuess ${numberOfCharactersToGuess}`);
-
         const pointsArray = this.getPointsArray(numberOfCharactersToGuess);
-
-        console.log(`pointsArray ${pointsArray}`);
 
         let i = 0;
 
@@ -108,8 +103,6 @@ export class GTMResultServiceImpl implements GTMResultService {
                 score += pointsArray[i++];
             }
         });
-
-        console.log(`score : ${score}`);
 
         return score;
     }
@@ -125,8 +118,6 @@ export class GTMResultServiceImpl implements GTMResultService {
         } else {
             const floor = Math.floor(pointsForEachCorrectGuess);
             const ceil = Math.ceil(pointsForEachCorrectGuess);
-            console.log(`floor ${floor}`);
-            console.log(`ceil ${ceil}`);
             for (let i = 2; i <= numberOfUnguessedCharacters; i++) {
                 let total =
                     floor * (i - 1) +

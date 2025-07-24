@@ -253,7 +253,6 @@ export class CommentRepositoryImpl implements CommentRepository {
                     select: "userId username name"
                 }
             });
-        ConsoleLog.info(`replies are : ${JSON.stringify(replies)}`);
         if (!replies) return [];
         return replies.map((reply) =>
             this._convertCommentDocumentToComment(
@@ -302,7 +301,6 @@ export class CommentRepositoryImpl implements CommentRepository {
                 }
             }
         ]);
-        ConsoleLog.info(`reports are : ${JSON.stringify(reports)}`);
         return reports;
     }
 
