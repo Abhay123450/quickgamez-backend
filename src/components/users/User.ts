@@ -28,8 +28,23 @@ export interface UserDetails {
     avatar?: string;
     profileImage?: string | null;
     bio?: string | null;
+    preferences?: UserPreferences;
 }
 export interface User extends UserDetails, UserAuth {
     userId: string;
+}
+export interface UserPreferences {
+    notifications: {
+        email: {
+            social: boolean;
+            game: boolean;
+            promotional: boolean;
+        };
+        push: {
+            social: boolean;
+            game: boolean;
+            promotional: boolean;
+        };
+    };
 }
 export type UserInit = Pick<User, "name" | "email" | "password">;
