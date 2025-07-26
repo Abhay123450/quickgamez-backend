@@ -78,6 +78,46 @@ export const userSchema = new Schema<UserDocument>(
             type: String,
             trim: true,
             default: null
+        },
+        preferences: {
+            notifications: {
+                email: {
+                    social: {
+                        type: Boolean,
+                        default: true
+                    },
+                    game: {
+                        type: Boolean,
+                        default: true
+                    },
+                    promotional: {
+                        type: Boolean,
+                        default: false
+                    },
+                    security: {
+                        type: Boolean,
+                        default: true
+                    }
+                },
+                push: {
+                    social: {
+                        type: Boolean,
+                        default: true
+                    },
+                    game: {
+                        type: Boolean,
+                        default: true
+                    },
+                    promotional: {
+                        type: Boolean,
+                        default: false
+                    },
+                    security: {
+                        type: Boolean,
+                        default: true
+                    }
+                }
+            }
         }
     },
     {
