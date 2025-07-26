@@ -39,11 +39,13 @@ export interface UserPreferences {
             social: boolean;
             game: boolean;
             promotional: boolean;
+            security: boolean;
         };
         push: {
             social: boolean;
             game: boolean;
             promotional: boolean;
+            security: boolean;
         };
     };
 }
