@@ -1,4 +1,4 @@
-import { User } from "./User.js";
+import { User, UserPreferences } from "./User.js";
 
 export interface UserRepository {
     addUser(
@@ -95,5 +95,9 @@ export interface UserRepository {
         email: string,
         otp: number,
         newPassword: string
+    ): Promise<boolean>;
+    updateNotificationSettings(
+        userId: string,
+        settings: Partial<UserPreferences["notifications"]>
     ): Promise<boolean>;
 }
