@@ -1,6 +1,6 @@
 import { SortOrder } from "mongoose";
 import { hashPassword } from "../../utils/passwordUtil.js";
-import { User } from "./User.js";
+import { User, UserPreferences } from "./User.js";
 import { UserRepository } from "./UserRepository.js";
 import { UserDocument, UserModel } from "./user.model.js";
 
@@ -228,6 +228,25 @@ export class UserRepositoryImpl implements UserRepository {
             { new: true }
         );
         if (!passwordUpdated) {
+            return false;
+        }
+        return true;
+    }
+
+    async updateNotificationSettings(
+        userId: string,
+        settings: Partial<UserPreferences["notifications"]>
+    ): Promise<boolean> {
+        const userUpdated = await UserModel.findOneAndUpdate(
+            {
+                _id: userId
+            },
+            {
+                "preferences.notifications": settings
+            },
+            { new: true }
+        );
+        if (!userUpdated) {
             return false;
         }
         return true;
