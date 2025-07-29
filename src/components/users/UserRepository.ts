@@ -96,8 +96,8 @@ export interface UserRepository {
         otp: number,
         newPassword: string
     ): Promise<boolean>;
-    updateNotificationSettings(
+    updateUserPreferences(
         userId: string,
-        settings: Partial<UserPreferences["notifications"]>
+        settings: Partial<UserPreferences>
     ): Promise<boolean>;
 }

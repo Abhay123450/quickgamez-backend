@@ -233,16 +233,16 @@ export class UserRepositoryImpl implements UserRepository {
         return true;
     }
 
-    async updateNotificationSettings(
+    async updateUserPreferences(
         userId: string,
-        settings: Partial<UserPreferences["notifications"]>
+        settings: Partial<UserPreferences>
     ): Promise<boolean> {
         const userUpdated = await UserModel.findOneAndUpdate(
             {
                 _id: userId
             },
             {
-                "preferences.notifications": settings
+                preferences: settings
             },
             { new: true }
         );
