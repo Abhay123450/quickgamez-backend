@@ -7,7 +7,7 @@ import { generateSecureRandomString } from "../../utils/generateSecureRandomStri
 import { generateOtp } from "../../utils/otpUtil.js";
 import { EmailService } from "../email/EmailService.js";
 import { NotificationService } from "../notifications/NotificationService.js";
-import { User } from "./User.js";
+import { User, UserPreferences } from "./User.js";
 import { UserRepository } from "./UserRepository.js";
 import { UserService } from "./UserService.js";
 
@@ -155,6 +155,19 @@ export class UserServiceImpl implements UserService {
         fieldsToUpdate: Partial<User>
     ): Promise<boolean> {
         return await this._userRepository.updateUser(userId, fieldsToUpdate);
+    }
+
+    async updateUserPreferences(
+        userId: string,
+        fieldsToUpdate: Partial<UserPreferences>
+    ): Promise<boolean> {
+        if (!fieldsToUpdate || Object.keys(fieldsToUpdate).length === 0) {
+            throw new ClientError("At least one field is required");
+        }
+        return await this._userRepository.updateUserPreferences(
+            userId,
+            fieldsToUpdate
+        );
     }
 
     async deleteUser(userId: string): Promise<boolean> {

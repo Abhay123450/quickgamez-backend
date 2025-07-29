@@ -1,4 +1,4 @@
-import { User } from "./User.js";
+import { User, UserPreferences } from "./User.js";
 
 export interface UserService {
     addUser(
@@ -17,6 +17,10 @@ export interface UserService {
     getMyProfile(userId: string): Promise<Partial<User> | null>;
     getUserByEmailOrUsername(userId: string): Promise<Partial<User> | null>;
     updateUser(userId: string, fieldsToUpdate: Partial<User>): Promise<boolean>;
+    updateUserPreferences(
+        userId: string,
+        fieldsToUpdate: Partial<UserPreferences>
+    ): Promise<boolean>;
     deleteUser(userId: string): Promise<boolean>;
     saveAvatar(userId: string, avatar: string): Promise<boolean>;
 }
