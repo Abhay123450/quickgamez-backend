@@ -105,6 +105,19 @@ export const validateUpdateUserReq = () => [
     )
 ];
 
+export const validateUpdateUserPreferencesReq = () => [
+    param("userId")
+        .exists()
+        .withMessage("User ID is required.")
+        .isLength({ min: 24, max: 24 })
+        .withMessage("Invalid User ID."),
+    body("preferences")
+        .exists()
+        .withMessage("Preferences is required.")
+        .isObject()
+        .withMessage("Preferences must be an object.")
+];
+
 export const validateUsername = () => [
     query("username")
         .isLength({ min: 1 })

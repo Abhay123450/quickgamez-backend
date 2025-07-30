@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { UserController } from "./UserController.js";
 import { matchedData, validationResult } from "express-validator";
 import { sendResponseSuccess } from "../../utils/sendResponse.js";
-import { User } from "./User.js";
+import { User, UserPreferences } from "./User.js";
 import { UserService } from "./UserService.js";
 import { HttpStatusCode } from "../../constants/httpStatusCode.enum.js";
 import { ConsoleLog } from "../../utils/ConsoleLog.js";
@@ -143,6 +143,39 @@ export class UserControllerImpl implements UserController {
             throw new ServerError("Failed to update user");
         }
         return sendResponseSuccess(res, "User updated successfully", {});
+    }
+
+    async updateUserPreferences(
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ) {
+        const errors = validationResult(req);
+        const errorMessages = errors.array().map((error) => error.msg);
+        if (!errors.isEmpty()) {
+            throw new ValidationError(errorMessages);
+        }
+        const { userId } = req.user;
+        if (!userId) {
+            throw new ValidationError(["Login Required."]);
+        }
+
+        const { notifications } = matchedData(req);
+        const updateBody: Partial<UserPreferences> = {};
+
+        if (!notifications || !notifications.email) {
+            throw new ValidationError(["Atleast one field is required"]);
+        }
+        updateBody.notifications = notifications;
+        const userUpdated = await this.userService.updateUserPreferences(
+            userId,
+            updateBody
+        );
+
+        if (!userUpdated) {
+            throw new ServerError("Failed to update user");
+        }
+        return sendResponseSuccess(res, "Settings updated successfully", {});
     }
 
     async deleteUser(req: Request, res: Response, next: NextFunction) {}

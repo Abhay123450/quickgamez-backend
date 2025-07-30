@@ -5,6 +5,7 @@ import { catchAsycError } from "../../middlewares/catchAsyncError.js";
 import {
     validateAddUserReq,
     validateGetUsersReq,
+    validateUpdateUserPreferencesReq,
     validateUpdateUserReq,
     validateUsername
 } from "./user.validate.js";
@@ -52,6 +53,16 @@ router
     .get(
         validateGetUsersReq(),
         catchAsycError(userController.getUsers.bind(userController))
+    );
+
+router
+    .route("/users/:userId/preferences")
+    .put(
+        authenticateUser,
+        validateUpdateUserPreferencesReq(),
+        catchAsycError(
+            userController.updateUserPreferences.bind(userController)
+        )
     );
 
 router
