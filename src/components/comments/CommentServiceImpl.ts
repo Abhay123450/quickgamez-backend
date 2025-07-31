@@ -1,7 +1,6 @@
 import { Reaction } from "../../constants/CommentReaction.js";
 import { ClientError, ServerError } from "../../utils/AppErrors.js";
 import { censorBadWords } from "../../utils/censorBadWords.js";
-import { ConsoleLog } from "../../utils/ConsoleLog.js";
 import { Comment, NewComment, NewReply } from "./Comment.js";
 import { CommentRepository } from "./CommentRepository.js";
 import { CommentService, Sort } from "./CommentService.js";

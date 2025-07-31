@@ -1,13 +1,11 @@
 import { NextFunction, Request, Response } from "express";
-import { CommentService, Sort } from "./CommentService.js";
+import { CommentService } from "./CommentService.js";
 import { ServerError, ValidationError } from "../../utils/AppErrors.js";
 import { CommentController } from "./CommentController.js";
 import { sendResponseSuccess } from "../../utils/sendResponse.js";
 import { NewReply } from "./Comment.js";
 import { HttpStatusCode } from "../../constants/httpStatusCode.enum.js";
-import { parse } from "path";
 import { matchedData, validationResult } from "express-validator";
-import { ConsoleLog } from "../../utils/ConsoleLog.js";
 
 export class CommentControllerImpl implements CommentController {
     _commentService: CommentService;
