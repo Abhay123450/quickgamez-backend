@@ -6,7 +6,6 @@ import {
     ClientError,
     ServerError
 } from "../../../utils/AppErrors.js";
-import { ConsoleLog } from "../../../utils/ConsoleLog.js";
 import { generateSecureRandomString } from "../../../utils/generateSecureRandomString.js";
 import { generateOtp } from "../../../utils/otpUtil.js";
 import { isPasswordMatched } from "../../../utils/passwordUtil.js";

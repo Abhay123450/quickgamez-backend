@@ -2,7 +2,6 @@ import { ObjectId, SortOrder, Types } from "mongoose";
 import { Industry, Movie } from "./Movie.js";
 import { MovieRepository } from "./MovieRepository.js";
 import { MovieModel } from "./movie.model.js";
-import { ConsoleLog } from "../../../utils/ConsoleLog.js";
 import { Difficulty } from "../../../constants/Difficulty.js";
 import { User } from "../../users/User.js";
 import { GTMResultModel } from "../result/gtmResult.model.js";
