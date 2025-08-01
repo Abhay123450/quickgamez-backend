@@ -73,7 +73,6 @@ export class RebusRepositoryImpl implements RebusRepository {
 
     async deleteRebus(rebusId: string): Promise<Rebus> {
         const rebusDocument = await RebusModel.findByIdAndDelete(rebusId);
-        console.log("rebusDocument is", rebusDocument);
         return this._convertRebusDocumentToRebus(rebusDocument);
     }
 

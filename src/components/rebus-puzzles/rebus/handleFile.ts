@@ -16,7 +16,6 @@ function fileFilter(
     file: Express.Multer.File,
     cb: FileFilterCallback
 ) {
-    console.log("applying file filter:", allowedTypes.join(","));
     ConsoleLog.info(`file: ${JSON.stringify(file)}`);
     if (allowedTypes.includes(file.mimetype)) {
         cb(null, true);

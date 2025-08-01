@@ -15,7 +15,6 @@ export class GTMResultServiceImpl implements GTMResultService {
     async addGTMResult(
         result: Omit<NewGuessTheMovieResult, "score">
     ): Promise<boolean> {
-        console.log(`result ${JSON.stringify(result)}`);
         // calculate score
         const score = this.calculateScore(
             result.difficulty,

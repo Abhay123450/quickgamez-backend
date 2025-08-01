@@ -147,7 +147,6 @@ export class UserAuthControllerImpl implements UserAuthController {
             throw new ValidationError(errorMessages);
         }
         const { email } = matchedData(req);
-        console.log(`email: ${email}`);
 
         const user = await this._userService.getUserByEmailOrUsername(email);
         if (!user) {

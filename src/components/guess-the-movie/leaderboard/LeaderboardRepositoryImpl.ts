@@ -1,4 +1,3 @@
-import { ConsoleLog } from "../../../utils/ConsoleLog.js";
 import { Industry } from "../movies/Movie.js";
 import { GTMResultModel } from "../result/gtmResult.model.js";
 import { Leaderboard, Timerange } from "./Leaderboard.js";
