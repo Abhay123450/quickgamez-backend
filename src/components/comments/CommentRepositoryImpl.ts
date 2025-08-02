@@ -1,21 +1,10 @@
-import mongoose, {
-    Types,
-    ObjectId,
-    isValidObjectId,
-    Schema,
-    QueryOptions,
-    SortOrder
-} from "mongoose";
-import FindAndModifyWriteOpResultObject from "mongodb";
-import { J, S } from "../../public/_app/immutable/chunks/scheduler.CWexU-Gu.js";
+import { Types, isValidObjectId, SortOrder } from "mongoose";
 import { Comment, NewComment, NewReply } from "./Comment.js";
 import { CommentDocument, CommentModel } from "./comment.model.js";
 import { CommentRepository } from "./CommentRepository.js";
 import { ClientError, ServerError } from "../../utils/AppErrors.js";
 import { User } from "../users/User.js";
-import { ConsoleLog } from "../../utils/ConsoleLog.js";
-import { Console } from "console";
-import { ReactionDocument, ReactionModel } from "./reaction.model.js";
+import { ReactionModel } from "./reaction.model.js";
 import { Reaction } from "../../constants/CommentReaction.js";
 import { CommentReaction } from "./CommentReaction.js";
 import { Sort } from "./CommentService.js";
@@ -40,7 +29,6 @@ export class CommentRepositoryImpl implements CommentRepository {
         const commentSaved = await (
             await commentModel.save()
         ).populate<Pick<User, "username" | "name">>("userId", "username name");
-        ConsoleLog.info(`saved comment ${JSON.stringify(commentSaved)}`);
         return this._convertCommentDocumentToComment(
             commentSaved as unknown as PopulatedComment
         ) as Comment;
@@ -225,7 +213,6 @@ export class CommentRepositoryImpl implements CommentRepository {
                 }
             }
         ]);
-        ConsoleLog.info(`saved reply ${JSON.stringify(replySaved)}`);
         return this._convertCommentDocumentToComment(
             replySaved as unknown as PopulatedComment
         ) as Comment;
