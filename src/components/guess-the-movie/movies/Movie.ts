@@ -1,11 +1,5 @@
 import { Difficulty } from "../../../constants/Difficulty.js";
 
-interface ReleaseDate {
-    date: number;
-    month: number;
-    year: number;
-}
-
 export type Industry = "hollywood" | "bollywood";
 
 export interface Movie {
