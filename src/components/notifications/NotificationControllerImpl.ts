@@ -4,7 +4,6 @@ import { NotificationService } from "./NotificationService.js";
 import { matchedData, validationResult } from "express-validator";
 import { ServerError, ValidationError } from "../../utils/AppErrors.js";
 import { sendResponseSuccess } from "../../utils/sendResponse.js";
-import { Server } from "http";
 
 export class NotificationControllerImpl implements NotificationController {
     private _notificationService: NotificationService;

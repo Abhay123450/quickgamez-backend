@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from "express";
-import { NewNotification } from "./Notification.js";
 
 export interface NotificationController {
     addNotification(
