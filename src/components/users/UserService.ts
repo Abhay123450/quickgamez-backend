@@ -17,6 +17,7 @@ export interface UserService {
     getMyProfile(userId: string): Promise<Partial<User> | null>;
     getUserByEmailOrUsername(userId: string): Promise<Partial<User> | null>;
     updateUser(userId: string, fieldsToUpdate: Partial<User>): Promise<boolean>;
+    getUserPreferences(userId: string): Promise<UserPreferences | null>;
     updateUserPreferences(
         userId: string,
         fieldsToUpdate: Partial<UserPreferences>

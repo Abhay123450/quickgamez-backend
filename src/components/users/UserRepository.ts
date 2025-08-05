@@ -96,6 +96,7 @@ export interface UserRepository {
         otp: number,
         newPassword: string
     ): Promise<boolean>;
+    getUserPreferences(userId: string): Promise<UserPreferences | null>;
     updateUserPreferences(
         userId: string,
         settings: Partial<UserPreferences>

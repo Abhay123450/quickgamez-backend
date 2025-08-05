@@ -233,6 +233,10 @@ export class UserRepositoryImpl implements UserRepository {
         return true;
     }
 
+    async getUserPreferences(userId: string): Promise<UserPreferences | null> {
+        throw new Error("Method not implemented.");
+    }
+
     async updateUserPreferences(
         userId: string,
         settings: Partial<UserPreferences>

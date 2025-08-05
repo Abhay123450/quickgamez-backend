@@ -6,6 +6,7 @@ export interface UserController {
     getMyDetails(req: Request, res: Response, next: NextFunction): void;
     getUserById(req: Request, res: Response, next: NextFunction): void;
     updateUser(req: Request, res: Response, next: NextFunction): void;
+    getUserPreferences(req: Request, res: Response, next: NextFunction): void;
     updateUserPreferences(
         req: Request,
         res: Response,

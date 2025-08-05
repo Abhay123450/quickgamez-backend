@@ -145,6 +145,10 @@ export class UserControllerImpl implements UserController {
         return sendResponseSuccess(res, "User updated successfully", {});
     }
 
+    async getUserPreferences(req: Request, res: Response, next: NextFunction) {
+        throw new Error("Method not implemented.");
+    }
+
     async updateUserPreferences(
         req: Request,
         res: Response,
