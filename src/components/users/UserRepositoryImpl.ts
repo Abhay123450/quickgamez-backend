@@ -234,7 +234,11 @@ export class UserRepositoryImpl implements UserRepository {
     }
 
     async getUserPreferences(userId: string): Promise<UserPreferences | null> {
-        throw new Error("Method not implemented.");
+        const user = await UserModel.findById(userId).select("preferences");
+        if (!user) {
+            return null;
+        }
+        return user.preferences as UserPreferences;
     }
 
     async updateUserPreferences(
@@ -293,6 +297,8 @@ export class UserRepositoryImpl implements UserRepository {
             user.profileImage = userDocument.profileImage;
         if (userDocument.authProvider)
             user.authProvider = userDocument.authProvider;
+        if (userDocument.preferences)
+            user.preferences = userDocument.preferences;
 
         return user;
     }

@@ -158,7 +158,7 @@ export class UserServiceImpl implements UserService {
     }
 
     async getUserPreferences(userId: string): Promise<UserPreferences | null> {
-        throw new Error("Method not implemented.");
+        return await this._userRepository.getUserPreferences(userId);
     }
 
     async updateUserPreferences(
