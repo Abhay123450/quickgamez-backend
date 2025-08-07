@@ -4,6 +4,7 @@ import { UserRepositoryImpl } from "./UserRepositoryImpl.js";
 import { catchAsycError } from "../../middlewares/catchAsyncError.js";
 import {
     validateAddUserReq,
+    validateGetUserPreferencesReq,
     validateGetUsersReq,
     validateUpdateUserPreferencesReq,
     validateUpdateUserReq,
@@ -57,6 +58,11 @@ router
 
 router
     .route("/users/:userId/preferences")
+    .get(
+        authenticateUser,
+        validateGetUserPreferencesReq(),
+        catchAsycError(userController.getUserPreferences.bind(userController))
+    )
     .put(
         authenticateUser,
         validateUpdateUserPreferencesReq(),

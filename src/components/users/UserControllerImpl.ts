@@ -146,7 +146,25 @@ export class UserControllerImpl implements UserController {
     }
 
     async getUserPreferences(req: Request, res: Response, next: NextFunction) {
-        throw new Error("Method not implemented.");
+        const errors = validationResult(req);
+        const errorMessages = errors.array().map((error) => error.msg);
+        if (!errors.isEmpty()) {
+            throw new ValidationError(errorMessages);
+        }
+        const { userId } = matchedData(req);
+        if (!userId) {
+            throw new ValidationError(["User Id is required"]);
+        }
+        if (req.user.userId.toString() !== userId) {
+            throw new AuthorizationError(
+                "You are not authorized to view this user"
+            );
+        }
+        const userPreferences = await this.userService.getUserById(userId);
+        if (!userPreferences) {
+            throw new ClientError("User preferences not found");
+        }
+        return sendResponseSuccess(res, userPreferences);
     }
 
     async updateUserPreferences(

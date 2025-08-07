@@ -105,6 +105,14 @@ export const validateUpdateUserReq = () => [
     )
 ];
 
+export const validateGetUserPreferencesReq = () => [
+    param("userId")
+        .exists()
+        .withMessage("User ID is required.")
+        .isLength({ min: 24, max: 24 })
+        .withMessage("Invalid User ID.")
+];
+
 export const validateUpdateUserPreferencesReq = () => [
     param("userId")
         .exists()
