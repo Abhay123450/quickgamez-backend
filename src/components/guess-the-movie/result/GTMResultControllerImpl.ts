@@ -14,8 +14,7 @@ export class GTMResultControllerImpl implements GTMResultController {
     }
 
     async getGTMResult(req: Request, res: Response, next: NextFunction) {
-        console.log(`req.params is ${JSON.stringify(req.params)}`);
-        sendResponseSuccess(res, req.params);
+        throw new Error("Method not implemented.");
     }
 
     async addGTMResult(req: Request, res: Response, next: NextFunction) {
@@ -37,14 +36,6 @@ export class GTMResultControllerImpl implements GTMResultController {
                 "invalid result for 'Guess the Movie' game."
             ]);
         }
-
-        console.log(
-            `startedAt is ${new Date(
-                gtmResult.startedAt
-            ).toISOString()}\nendedAt is ${new Date(
-                gtmResult.endedAt
-            ).toISOString()}`
-        );
 
         const result = await this._gtmResultService.addGTMResult(gtmResult);
 
