@@ -70,8 +70,24 @@ export class CommentRepositoryImpl implements CommentRepository {
             );
         }) as Partial<Comment>[];
     }
-    async getCommentsByUserId(userId: string): Promise<Comment[]> {
-        throw new Error("Method not implemented.");
+    async getCommentsByUserId(
+        userId: string,
+        page: number,
+        limit: number
+    ): Promise<Comment[]> {
+        const comments = await CommentModel.find({ userId })
+            .skip((page - 1) * limit)
+            .limit(limit)
+            .populate<Pick<User, "username" | "name" | "avatar">>(
+                "userId",
+                "username name avatar"
+            );
+        if (!comments) return [];
+        return comments.map((comment) => {
+            return this._convertCommentDocumentToComment(
+                comment as unknown as PopulatedComment
+            );
+        }) as Comment[];
     }
     async updateComment(
         commentId: string,

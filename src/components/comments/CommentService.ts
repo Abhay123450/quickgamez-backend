@@ -15,7 +15,11 @@ export interface CommentService {
         sort: Sort,
         userId?: string
     ): Promise<Comment[]>;
-    getCommentsByUserId(userId: string): Promise<Comment[]>;
+    getCommentsByUserId(
+        userId: string,
+        page: number,
+        limit: number
+    ): Promise<Comment[]>;
     deleteComment(commentId: string, userId: string): Promise<boolean>;
     likeComment(commentId: string, userId: string): Promise<boolean>;
     unlikeComment(commentId: string, userId: string): Promise<boolean>;

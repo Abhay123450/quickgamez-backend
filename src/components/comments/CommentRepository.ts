@@ -11,7 +11,11 @@ export interface CommentRepository {
         limit: number,
         sort: Sort
     ): Promise<Partial<Comment>[]>;
-    getCommentsByUserId(userId: string): Promise<Comment[]>;
+    getCommentsByUserId(
+        userId: string,
+        page: number,
+        limit: number
+    ): Promise<Comment[]>;
     updateComment(
         commentId: string,
         comment: Partial<Comment>

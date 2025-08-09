@@ -32,8 +32,16 @@ export class CommentServiceImpl implements CommentService {
         if (!userId) return comments;
         return this._populateUserReaction(comments, userId);
     }
-    async getCommentsByUserId(userId: string): Promise<Comment[]> {
-        throw new Error("Method not implemented.");
+    async getCommentsByUserId(
+        userId: string,
+        page: number,
+        limit: number
+    ): Promise<Comment[]> {
+        return await this._commentRepository.getCommentsByUserId(
+            userId,
+            page,
+            limit
+        );
     }
     async deleteComment(commentId: string, userId: string): Promise<boolean> {
         return await this._commentRepository.deleteComment(commentId, userId);
