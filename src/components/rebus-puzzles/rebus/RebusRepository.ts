@@ -23,5 +23,9 @@ export interface RebusRepository {
         count: number,
         difficulty?: Rebus["difficulty"]
     ): Promise<Rebus[]>;
+    updateRebus(
+        rebusId: Rebus["rebusId"],
+        rebus: Partial<Omit<Rebus, "rebusId">>
+    ): Promise<Rebus>;
     deleteRebus(rebusId: Rebus["rebusId"]): Promise<Rebus>;
 }

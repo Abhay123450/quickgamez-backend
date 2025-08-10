@@ -71,6 +71,21 @@ export class RebusRepositoryImpl implements RebusRepository {
         return rebusDocuments.map((r) => this._convertRebusDocumentToRebus(r));
     }
 
+    async updateRebus(
+        rebusId: Rebus["rebusId"],
+        rebus: Partial<Omit<Rebus, "rebusId">>
+    ): Promise<Rebus> {
+        const updatedRebus = await RebusModel.findByIdAndUpdate(
+            rebusId,
+            rebus,
+            { new: true }
+        );
+        if (!updatedRebus) {
+            throw new ClientError("Rebus not found", 404);
+        }
+        return this._convertRebusDocumentToRebus(updatedRebus);
+    }
+
     async deleteRebus(rebusId: string): Promise<Rebus> {
         const rebusDocument = await RebusModel.findByIdAndDelete(rebusId);
         return this._convertRebusDocumentToRebus(rebusDocument);
