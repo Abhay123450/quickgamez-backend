@@ -15,7 +15,7 @@ export class FileUploadSerivceImpl implements FileUploadSerivce {
     ): Promise<string> {
         const bucket = this._storage.bucket(collectionName);
         const fileToSaved = bucket.file(fileName);
-        const filesaved = await fileToSaved.save(file, {
+        await fileToSaved.save(file, {
             metadata: {
                 contentType: mimeType,
                 cacheControl: "public, max-age=31536000"
@@ -39,18 +39,6 @@ export class FileUploadSerivceImpl implements FileUploadSerivce {
         } catch (error) {
             ConsoleLog.error(error);
             return false;
-        }
-    }
-    private async _createBucket(bucketName: string) {
-        try {
-            const bucket = await this._storage.createBucket(bucketName, {
-                location: "us"
-            });
-            ConsoleLog.info(
-                `bucket named ${bucketName} created: ${JSON.stringify(bucket)}`
-            );
-        } catch (error) {
-            ConsoleLog.error(error);
         }
     }
 }
