@@ -22,9 +22,13 @@ import { contactUsRouter } from "./components/contact-us/contactUs.route.js";
 import { rebusRouter } from "./components/rebus-puzzles/rebus/rebus.route.js";
 import { friendsRouter } from "./components/friends/friends.route.js";
 
+import { pinoHttp } from "pino-http";
+
 const port: number = Number(process.env.PORT) || 4000;
 
 const app: Express = express();
+
+app.use(pinoHttp());
 
 app.use(
     cors({
