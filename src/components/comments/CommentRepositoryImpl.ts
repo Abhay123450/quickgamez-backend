@@ -8,7 +8,7 @@ import { ReactionModel } from "./reaction.model.js";
 import { Reaction } from "../../constants/CommentReaction.js";
 import { CommentReaction } from "./CommentReaction.js";
 import { Sort } from "./CommentService.js";
-import { CommentReportModel } from "./report/comment.model.js";
+import { CommentReportModel } from "./report/commentReport.model.js";
 
 type PopulatedComment = Omit<CommentDocument, "userId"> & {
     userId: Pick<User, "username" | "name" | "avatar"> & {
